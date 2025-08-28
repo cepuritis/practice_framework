@@ -1,12 +1,15 @@
 <?php
 namespace Controller\Home;
 
-use Contracts\Routing\ActionInterface;
-class Home implements ActionInterface
-{
+use Core\Attributes\HttpRequest\Route;
+use Core\Attributes\HttpRequest\GET;
 
-    public function execute()
+#[Route('/')]
+class Home
+{
+    #[GET]
+    public function getPath()
     {
-        echo "This is homepage";
+        echo "This is Home Page";
     }
 }

@@ -25,6 +25,6 @@ class FrontController
      */
     private function getAllRouters(): array
     {
-
+        #todo Write a code for CLI command that parses all Controllers and generates Routes
     }
 }

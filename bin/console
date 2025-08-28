@@ -1,0 +1,25 @@
+#!/usr/bin/env php
+<?php
+
+spl_autoload_register(function($class) {
+    $parts = explode("\\", $class);
+    if (isset($parts[0]) && $parts[0] === "Cli") {
+        require_once (__DIR__ . "/../" . str_replace("\\","/", $class) . ".php");
+    }
+});
+
+$commands = require __DIR__ . "/../Cli/Commands.php";
+
+if (!isset($argv[1])) {
+    throw new \Exception("Please provide a command");
+}
+
+$command = strtolower($argv[1]);
+
+if (!isset($commands[$command])) {
+    throw new \Exception( "Command not found in Commands.php");
+}
+
+$commandClass = new $commands[$command];
+
+$commandClass->execute(array_splice($argv, 2));
