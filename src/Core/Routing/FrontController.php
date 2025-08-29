@@ -3,6 +3,7 @@
 namespace Core\Routing;
 
 use Core\Contracts\HttpRequestInterface;
+use Core\Contracts\RouterInterface;
 
 class FrontController
 {
@@ -13,9 +14,12 @@ class FrontController
     }
     public function dispatch()
     {
+        /**
+         * @var RouterInterface $router
+         */
         foreach ($this->getAllRouters() as $router) {
-            if ($router->match()) {
-                $router->dispatch();
+            if ($router->match($this->request->getPath(), $this->request->getMethod())) {
+                $router->dispatch($this->request);
             }
         }
     }
@@ -25,6 +29,14 @@ class FrontController
      */
     private function getAllRouters(): array
     {
-        #todo Write a code for CLI command that parses all Controllers and generates Routes
+        $routers = require CONFIG_PATH . "/generated/routes.php";
+
+        $routerInstances = [];
+
+        foreach ($routers as $router => $paths) {
+            $routerInstances[] = new $router($paths);
+        }
+
+        return $routerInstances;
     }
 }
