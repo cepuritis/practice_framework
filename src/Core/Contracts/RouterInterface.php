@@ -9,7 +9,7 @@ interface RouterInterface
     /**
      * @return bool
      */
-    public static function match(): bool;
+    public function match(string $path, HttpRequestMethod $method): bool;
 
     /**
      * @param HttpRequestInterface $request

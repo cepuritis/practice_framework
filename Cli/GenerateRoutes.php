@@ -1,12 +1,34 @@
 <?php
 namespace Cli;
 
-class GenerateRoutes implements  CommandInterface
-{
+use Core\Contracts\RouterInterface;
 
+class GenerateRoutes implements CommandInterface
+{
+    private array $routers = [];
+
+    /**
+     * @param array $args
+     * @return void
+     */
     public function execute(array $args): void
     {
-        echo "Generating Routes" . PHP_EOL;
-        var_dump($args);
+        $routerNamespace = "Core\\Routing\\Routers\\";
+        foreach (scandir(__DIR__ . "/../src/Core/Routing/Routers") as $file) {
+            if (preg_match('/^[^.].*\.php$/', $file)) {
+                /**
+                 * @var RouterInterface|string $class
+                 */
+                $class = $routerNamespace . pathinfo($file, PATHINFO_FILENAME);
+                if (class_exists($class) && in_array(RouterInterface::class, class_implements($class))) {
+                    $this->routers[$class] = $class::generate();
+                }
+            }
+        }
+
+        $phpCode = "<?php\n\nreturn " . str_replace(['array (', ')'], ['[', ']'], var_export($this->routers, true)) . ";\n";
+
+// Write to file
+        file_put_contents(CONFIG_PATH . '/generated/routes.php', $phpCode);
     }
 }
