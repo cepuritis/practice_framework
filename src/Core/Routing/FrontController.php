@@ -2,7 +2,7 @@
 
 namespace Core\Routing;
 
-use Core\Contracts\HttpRequestInterface;
+use Core\Contracts\Http\HttpRequestInterface;
 use Core\Contracts\RouterInterface;
 
 class FrontController

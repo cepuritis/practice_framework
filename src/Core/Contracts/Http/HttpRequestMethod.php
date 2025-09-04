@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Contracts;
+namespace Core\Contracts\Http;
 
 use Core\Exceptions\InvalidHttpMethod;
 

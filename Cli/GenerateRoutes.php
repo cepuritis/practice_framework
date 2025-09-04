@@ -14,15 +14,13 @@ class GenerateRoutes implements CommandInterface
     public function execute(array $args): void
     {
         $routerNamespace = "Core\\Routing\\Routers\\";
-        foreach (scandir(__DIR__ . "/../src/Core/Routing/Routers") as $file) {
-            if (preg_match('/^[^.].*\.php$/', $file)) {
-                /**
-                 * @var RouterInterface|string $class
-                 */
-                $class = $routerNamespace . pathinfo($file, PATHINFO_FILENAME);
-                if (class_exists($class) && in_array(RouterInterface::class, class_implements($class))) {
-                    $this->routers[$class] = $class::generate();
-                }
+        foreach (glob(__DIR__ . "/../src/Core/Routing/Routers/*.php") as $file) {
+            /**
+             * @var RouterInterface|string $class
+             */
+            $class = $routerNamespace . pathinfo($file, PATHINFO_FILENAME);
+            if (class_exists($class) && in_array(RouterInterface::class, class_implements($class))) {
+                $this->routers[$class] = $class::generate();
             }
         }
 

@@ -3,10 +3,8 @@
 namespace Core\Routing\Routers;
 
 use Core\Contracts\BaseRouter;
-use Core\Contracts\HttpRequestInterface;
-use Core\Contracts\HttpRequestMethod;
-use Core\Contracts\RouteGeneratorInterface;
-use Core\Contracts\RouterInterface;
+use Core\Contracts\Http\HttpRequestInterface;
+use Core\Contracts\Http\HttpRequestMethod;
 use Core\Routing\Traits\RouteGenerator;
 
 class DefaultRouter extends BaseRouter

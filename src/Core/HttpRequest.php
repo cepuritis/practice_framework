@@ -1,8 +1,9 @@
 <?php
 namespace Core;
 
-use Core\Contracts\HttpRequestInterface;
-use Core\Contracts\HttpRequestMethod;
+use Core\Contracts\Http\HttpRequestInterface;
+use Core\Contracts\Http\HttpRequestMethod;
+
 class HttpRequest implements HttpRequestInterface
 {
     private array $request = [];

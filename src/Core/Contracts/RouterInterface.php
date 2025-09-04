@@ -2,7 +2,8 @@
 
 namespace Core\Contracts;
 
-use Core\Contracts\HttpRequestInterface;
+use Core\Contracts\Http\HttpRequestInterface;
+use Core\Contracts\Http\HttpRequestMethod;
 
 interface RouterInterface
 {

@@ -6,13 +6,13 @@ use Attribute;
 use Core\Contracts\Http\HttpMethodAttributeInterface;
 
 #[Attribute(Attribute::TARGET_METHOD)]
-class GET implements HttpMethodAttributeInterface
+class POST implements HttpMethodAttributeInterface
 {
     /**
      * @return string
      */
     public static function getMethod(): string
     {
-        return 'GET';
+        return 'POST';
     }
 }

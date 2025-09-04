@@ -1,5 +1,5 @@
 <?php
-namespace Core\Contracts;
+namespace Core\Contracts\Http;
 interface HttpRequestInterface
 {
     public const METHOD = 'METHOD';
