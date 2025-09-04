@@ -2,7 +2,6 @@
 
 namespace Core\Routing\Traits;
 
-use Core\Contracts\HttpMethodAttributeInterface;
 use Core\Exceptions\DuplicateHttpMethodAttributeException;
 
 trait RouteGenerator
@@ -50,7 +49,7 @@ trait RouteGenerator
             foreach ($reflecionClass->getMethods() as $method) {
                 $attributes = $method->getAttributes();
                 foreach ($attributes as $httpMethod) {
-                    if (!is_subclass_of($httpMethod->getName(), \Core\Contracts\HttpMethodAttributeInterface::class)) {
+                    if (!is_subclass_of($httpMethod->getName(), \Core\Contracts\Http\HttpMethodAttributeInterface::class)) {
                         continue;
                     }
                     $name = $httpMethod->getName()::getMethod();
