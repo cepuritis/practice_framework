@@ -5,6 +5,6 @@ spl_autoload_register(function ($class) {
     require_once(__DIR__ . "/../src/" . str_replace('\\', '/', $class) . ".php");
 });
 
-use Core\HttpRequest;
+use Core\Http\HttpRequest;
 
 $request = HttpRequest::getInstance();
