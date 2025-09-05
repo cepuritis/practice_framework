@@ -1,5 +1,5 @@
 <?php
-namespace Core;
+namespace Core\Http;
 
 use Core\Contracts\Http\HttpRequestInterface;
 use Core\Contracts\Http\HttpRequestMethod;

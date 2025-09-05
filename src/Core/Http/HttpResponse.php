@@ -1,20 +1,21 @@
 <?php
 
-namespace Core;
+namespace Core\Http;
 
+use Core\Contracts\Http\HttpAbstractResponse;
 use Core\Contracts\Http\HttpResponseCode;
 use Core\Contracts\Http\HttpResponseInterface;
 use Core\Exception\TemplateNotSetException;
+use Core\Tags\LinkTag;
 use Core\Tags\MetaTag;
 use Core\Tags\ScriptTag;
 use http\Exception\RuntimeException;
 
-class HttpResponse implements HttpResponseInterface
+class HttpResponse extends HttpAbstractResponse implements HttpResponseInterface
 {
-    private HttpResponseCode $responseCode = HttpResponseCode::OK;
+    protected HttpResponseCode $responseCode = HttpResponseCode::OK;
     private ?string $template = null;
     private bool $useBaseTemplate = true;
-    private array $data = [];
 
     /**
      * @param string $template
@@ -48,6 +49,7 @@ class HttpResponse implements HttpResponseInterface
             $template = ob_get_clean();
             ob_start();
             include $baseTemplate;
+            http_response_code($this->responseCode->value);
             echo ob_get_clean();
         }
     }
@@ -67,30 +69,9 @@ class HttpResponse implements HttpResponseInterface
         $this->data["scripts"][] = $script;
     }
 
-    /**
-     * @param string $title
-     * @return $this
-     */
-    public function setTitle(string $title): self
+    public function addLinkTag(LinkTag $link)
     {
-        $this->data["title"] = $title;
-        return $this;
+        $this->data["linkTags"][] = $link;
     }
 
-    /**
-     * @param HttpResponseCode $code
-     * @return void
-     */
-    public function setCode(HttpResponseCode $code): void
-    {
-        $this->responseCode = $code;
-    }
-
-    /**
-     * @return HttpResponseCode
-     */
-    public function getCode(): HttpResponseCode
-    {
-        return $this->responseCode;
-    }
 }
