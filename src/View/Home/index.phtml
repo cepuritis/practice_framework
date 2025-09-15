@@ -1,9 +1,17 @@
-<header class="container-fluid p-5 bg-primary text-white text-center">
-    <h1>This is the home page</h1>
+<?php /** @var \Core\Models\DataObject $data */ ?>
+<header class="w-full bg-blue-600 text-white py-16 px-4 md:px-8 text-center">
+    <h1 class="text-4xl md:text-5xl font-bold mb-4">Welcome to the Home Page</h1>
+    <p class="text-lg md:text-xl max-w-2xl mx-auto">
+        This is a simple, clean layout using Tailwind CSS for a modern homepage look.
+    </p>
 </header>
-<nav>
-    Home
-</nav>
-<main>
-    <div>This is the main content of the home Page</div>
+<?= \Core\Helpers\ViewHelper::include('Navigation/nav', $data)?>
+<main class="py-12 px-4 md:px-8 max-w-5xl mx-auto">
+    <div class="bg-white shadow-md rounded-lg p-6 md:p-10 text-gray-800">
+        <h2 class="text-2xl font-semibold mb-4">Main Content</h2>
+        <p class="text-base md:text-lg leading-relaxed">
+            This is the main content of the home page. You can add cards, sections, or any components here.
+            Tailwind makes it easy to adjust spacing, typography, and colors responsively.
+        </p>
+    </div>
 </main>

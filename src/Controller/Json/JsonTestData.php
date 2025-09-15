@@ -5,20 +5,24 @@ namespace Controller\Json;
 use Core\Attributes\HttpRequest\GET;
 use Core\Attributes\HttpRequest\Route;
 use Core\Http\HttpJsonResponse;
+use Core\View\JsonRenderer;
+use Core\View\ViewRenderer;
 
 #[ROUTE('/json/test1')]
 class JsonTestData
 {
+    /**
+     * @throws \JsonException
+     */
     #[GET]
-    public function get()
+    public function get(): void
     {
-        $jsonData = json_encode($this->getTestData());
-        $response = new HttpJsonResponse();
-        $response->setJsonData($jsonData);
-        $response->render();
+        $jsonView = (new JsonRenderer($this->getTestData(), true));
+        $response = new HttpJsonResponse($jsonView);
+        $response->send();
     }
 
-    private function getTestData()
+    private function getTestData(): array
     {
         return [
             'user' => [

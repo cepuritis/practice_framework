@@ -1,55 +1,58 @@
+<?php
+/**
+ * @var \Core\Models\DataObject $data
+ */
+
+/**
+ * @var \Core\View\PageRenderer $this
+ */
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title><?= $title ?? "Homepage" ?></title>
+    <title><?= $data->getTitle() ?? "Homepage" ?></title>
     <?php
-        if (isset($linkTags)) {
-            /**
-             * @var \Core\Tags\LinkTag $tag
-             */
-            foreach ($linkTags as $link) {
-                $link->render();
-            }
-        }
-    ?>
-
-    <?php
-        if (isset($metaTags)) {
-            /**
-             * @var \Core\Tags\MetaTag $tag
-             */
-            foreach ($metaTags as $tag) {
-                $tag->render();
-            }
-        }
-    ?>
-
-    <?php
-    if (isset($scripts)) {
         /**
-         * @var \Core\Tags\ScriptTag $tag
+         * @var \Core\Tags\LinkTag $tag
          */
-        foreach ($scripts as $script) {
-            $script->render();
+        foreach ($this->linkTags as $link) {
+            $link->render();
         }
-    }
-    ?>
+?>
 
+    <?php
+    /**
+     * @var \Core\Tags\MetaTag $tag
+     */
+    foreach ($this->metaTags as $tag) {
+        $tag->render();
+    }
+?>
+
+    <?php
+    /**
+     * @var \Core\Tags\ScriptTag $tag
+     */
+    foreach ($this->scriptTags as $script) {
+        $script->render();
+    }
+?>
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico">
 
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="<?= \Core\Helpers\ViewHelper::getMainStylesheet() ?>">
 
     <!-- JS at top only if absolutely needed -->
 </head>
 <body>
 <?php
-    /** @var  $template */
-    echo $template;
+/** @var  $template */
+echo $template;
 ?>
 </body>
 </html>

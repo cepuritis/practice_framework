@@ -2,9 +2,11 @@
 
 namespace Core\Contracts\Http;
 
+use Core\Contracts\View\ViewInterface;
+
 interface HttpResponseInterface
 {
-    public function render(): void;
+    public function send(): void;
 
     public function setCode(HttpResponseCode $code): void;
 

@@ -3,7 +3,11 @@
 namespace Core\Routing;
 
 use Core\Contracts\Http\HttpRequestInterface;
+use Core\Contracts\Http\HttpResponseCode;
 use Core\Contracts\RouterInterface;
+use Core\Http\HttpResponse;
+use Core\Tags\MetaTag;
+use Core\View\PageRenderer;
 
 class FrontController
 {
@@ -14,14 +18,40 @@ class FrontController
     }
     public function dispatch()
     {
+        $matched = false;
         /**
          * @var RouterInterface $router
          */
         foreach ($this->getAllRouters() as $router) {
             if ($router->match($this->request->getPath(), $this->request->getMethod())) {
+                $matched = true;
                 $router->dispatch($this->request);
+                break;
             }
         }
+
+        if (!$matched) {
+            $this->handleNotFound();
+        }
+    }
+
+    private function handleNotFound()
+    {
+        $response = new HttpResponse();
+        $response->setCode(HttpResponseCode::NOT_FOUND);
+
+        $content = new PageRenderer("404/index");
+        $content->setTitle("Page Not Found");
+
+        $noIndexTag = new MetaTag([
+            "name"    => "robots",
+            "content" => "noindex, nofollow"
+        ]);
+
+        $content->addMetaTag($noIndexTag);
+        $response->setContent($content);
+
+        $response->send();
     }
 
     /**
