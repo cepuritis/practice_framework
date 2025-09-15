@@ -17,7 +17,7 @@ class PageRenderer implements ViewInterface
      * @var array<ViewInterface> $views
      */
     protected array $views = [];
-    const DEFAULT_BASE_TEMPLATE = VIEW_PATH . "/Base/index.phtml";
+    const DEFAULT_BASE_TEMPLATE = "Base/index";
     protected string $baseTemplate;
     protected string $initialTemplate;
     protected array $metaTags = [];
@@ -34,7 +34,7 @@ class PageRenderer implements ViewInterface
         ?DataObject $data = null
     ) {
         $this->initialTemplate = $initialTemplate;
-        $this->baseTemplate = $baseTemplate;
+        $this->baseTemplate = VIEW_PATH . "/{$baseTemplate}.phtml";
         $this->data = is_null($data) ? new DataObject() : $data;
         self::$current = $this;
     }
