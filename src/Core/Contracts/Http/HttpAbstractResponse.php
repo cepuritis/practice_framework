@@ -2,18 +2,34 @@
 
 namespace Core\Contracts\Http;
 
+use Core\Contracts\View\ViewInterface;
+use Core\Exception\TemplateNotSetException;
+
 abstract class HttpAbstractResponse implements HttpResponseInterface
 {
-    protected HttpResponseCode $responseCode;
+    protected HttpResponseCode $responseCode = HttpResponseCode::OK;
     protected array $data = [];
+
+    protected ViewInterface $content;
+
     /**
-     * @param string $title
-     * @return $this
+     * @param ViewInterface $content
+     * @return self
      */
-    public function setTitle(string $title): self
+    public function setContent(ViewInterface $content): self
     {
-        $this->data["title"] = $title;
+        $this->content = $content;
         return $this;
+    }
+
+    public function send(): void
+    {
+        if (!$this->content) {
+            throw new TemplateNotSetException("Response Content Not set !");
+        }
+
+        http_response_code($this->responseCode->value);
+        echo $this->content->render();
     }
 
     /**

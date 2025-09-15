@@ -2,7 +2,7 @@
 
 namespace Core\Contracts\Tags;
 
-use http\Exception\RuntimeException;
+use RuntimeException;
 
 abstract class HtmlTag
 {

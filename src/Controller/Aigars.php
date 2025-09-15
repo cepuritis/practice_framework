@@ -9,7 +9,8 @@ use Core\Attributes\HttpRequest\GET;
 class Aigars
 {
     #[GET]
-    public function get() {
+    public function get(): void
+    {
         echo "This is Aigars URl";
     }
 }
