@@ -10,7 +10,7 @@ abstract class HttpAbstractResponse implements HttpResponseInterface
     protected HttpResponseCode $responseCode = HttpResponseCode::OK;
     protected array $data = [];
 
-    protected ViewInterface $content;
+    protected ?ViewInterface $content;
 
     /**
      * @param ViewInterface $content

@@ -1,7 +1,7 @@
 
 # Practice Framework
 
-I wrote this small php Framework for practice purposes and to review some of forgotten php functionality thats why 'spl_autoload_register' is used here instead of composer psr4 autoloader.
+I wrote this small php Framework for practice purposes and to review some of forgotten php functionality that's why 'spl_autoload_register' is used here instead of composer psr4 autoloader.
 
 # Usage
 ## Controller
@@ -27,18 +27,17 @@ class Home
     #[GET]
     public function getPath(HttpRequest $request)
     {
-        $response = new HttpResponse();
-        $content = new PageRenderer("Home/index");
-        $content->setData(new DataObject(['firstName' => 'Aigars', 'lastName' => 'Cepuritis']));
-        $content->setTitle("Home Page");
-        $response->setContent($content);
+        $view = new PageRenderer("Home/index");
+        $view->setData(new DataObject(['firstName' => 'Aigars', 'lastName' => 'Cepuritis']));
+        $view->setTitle("Home Page");
+        $response = new HttpResponse($view);
         $response->send();
     }
 }
 
 ```
 
-!!!! After adding a new Method or route you need to regenarate routes by cli command bin/console generate:routes  . This will create routes.php file in config/generated folder.
+!!!! After adding a new Method or route you need to regenerate routes by cli command bin/console generate:routes  . This will create routes.php file in config/generated folder.
 
 
 The route is matched by frontController which also pass in HttpRequest object into the method call. All the routes in Controller directory are managed by defaultRouter, if needed new Routers Can be created, but this functionality was mainly added for additional training complexity.
@@ -53,7 +52,8 @@ For JSON response use JsonRenderer and HttpJsonResponse instances respectively. 
 
 ## ViewInterface
 To include a one template in another ViewHelper::include() method can be used specifying the template file and if necessary data that can be used in the included template, data can be either DataObject or an array , but it will be converted to DataObject regardless. It can be accesses through ```$data``` variable from the included template.
-DataObject uses magic __call method to store and get keys for example if you pass an array ['firsName' => 'john', 'lastName' => 'doe'] in the template file this can be used as $data->getFirstName();, $data->getLastName();
+DataObject uses magic __call method to store and get keys for example if you pass an array ['firsName' => 'john', 'lastName' => 'doe'] in the template file this can be used as $data->getFirstName();, $data->getLastName(); The scope is isolated by using Closures so if you do not explicitly send data from
+parent template to the child template, it won't be available.
 
 ```php
 <?php /** @var \Core\Models\DataObject $data */ ?>
