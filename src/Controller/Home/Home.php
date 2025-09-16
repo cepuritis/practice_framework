@@ -17,17 +17,16 @@ class Home
     #[GET]
     public function getPath(HttpRequest $request)
     {
-        $response = new HttpResponse();
-        $content = new PageRenderer("Home/index");
-        $content->setData(new DataObject(['firstName' => 'Aigars', 'lastName' => 'Cepuritis']));
-        $content->setTitle("Home Page");
+        $view = new PageRenderer("Home/index");
+        $view->setData(new DataObject(['firstName' => 'Aigars', 'lastName' => 'Cepuritis']));
+        $view->setTitle("Home Page");
         $meta = new MetaTag(
             [
                 "name" => "author",
                 "content" => "Aigars Cepuritis"
             ]
         );
-        $content->addMetaTag($meta);
+        $view->addMetaTag($meta);
 
 //        $script = new ScriptTag("https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js");
 //        $link = new LinkTag(
@@ -39,7 +38,7 @@ class Home
 //        $content->addExternalScript($script);
 //        $content->addLinkTag($link);
 
-        $response->setContent($content);
+        $response = new HttpResponse($view);
         $response->send();
     }
 }

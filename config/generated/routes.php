@@ -3,6 +3,14 @@
 return [
   'Core\\Routing\\Routers\\DefaultRouter' => 
   [
+    '/about' => 
+    [
+      'class' => 'Controller\\About\\About',
+      'methods' => 
+      [
+        'GET' => 'get',
+      ],
+    ],
     '/json/test1' => 
     [
       'class' => 'Controller\\Json\\JsonTestData',

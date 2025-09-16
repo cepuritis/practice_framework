@@ -1,0 +1,102 @@
+<?= \Core\Helpers\ViewHelper::include("Partial/header") ?>
+
+<main class="min-h-screen flex flex-col">
+
+    <!-- Hero -->
+    <section class="px-4 py-16 bg-gray-100 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900">About Us</h1>
+        <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-600">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. We believe in building
+            meaningful solutions that make life better.
+        </p>
+    </section>
+
+    <!-- Story -->
+    <section class="py-16 bg-white">
+        <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900">Our Story</h2>
+                <p class="mt-4 text-gray-600">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.
+                    Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at
+                    nibh elementum imperdiet.
+                </p>
+                <p class="mt-4 text-gray-600">
+                    Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta.
+                    Mauris massa. Vestibulum lacinia arcu eget nulla.
+                </p>
+            </div>
+            <div class="bg-gray-100 rounded-lg shadow-inner p-6 text-center">
+                <p class="text-lg text-gray-700 italic">
+                    “Our mission is to blend creativity and technology to deliver impactful experiences.”
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold text-gray-900">Meet the Team</h2>
+            <p class="mt-3 text-gray-600">The people behind our work.</p>
+
+            <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="w-24 h-24 mx-auto rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold">
+                        A
+                    </div>
+                    <h3 class="mt-4 text-xl font-semibold">Alice Johnson</h3>
+                    <p class="text-gray-600">CEO & Founder</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="w-24 h-24 mx-auto rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold">
+                        B
+                    </div>
+                    <h3 class="mt-4 text-xl font-semibold">Bob Smith</h3>
+                    <p class="text-gray-600">CTO</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="w-24 h-24 mx-auto rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold">
+                        C
+                    </div>
+                    <h3 class="mt-4 text-xl font-semibold">Clara Lee</h3>
+                    <p class="text-gray-600">Lead Designer</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-16 bg-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl font-bold text-gray-900">Want to work with us?</h2>
+            <p class="mt-3 text-gray-600">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Reach out and let’s build something great together.
+            </p>
+            <div class="mt-6">
+                <a href="/contact" class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
+                    Contact Us
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-auto bg-white border-t border-gray-200">
+        <div class="max-w-6xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-md bg-blue-600 flex items-center justify-center text-white font-bold">LI</div>
+                <div>
+                    <p class="font-semibold">LoremIpsum</p>
+                    <p class="text-sm text-gray-500">Built with care.</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <a href="/privacy" class="text-sm text-gray-600 hover:text-blue-600">Privacy</a>
+                <a href="/terms" class="text-sm text-gray-600 hover:text-blue-600">Terms</a>
+                <a href="/contact" class="text-sm text-gray-600 hover:text-blue-600">Contact</a>
+            </div>
+        </div>
+    </footer>
+</main>
