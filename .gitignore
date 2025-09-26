@@ -3,3 +3,4 @@ vendor/
 test/
 .php-cs-fixer.cache
 node_modules
+config/env.php
