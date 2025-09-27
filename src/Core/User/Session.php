@@ -35,11 +35,27 @@ class Session
             );
         }
 
+        if (empty($redis['host']) || empty($redis['port'])) {
+            throw new \RuntimeException("Redis session config requires 'host' and 'port'.");
+        }
+
         $host = $redis['host'];
         $port= $redis['port'];
         $auth = $redis['auth'] ?? null;
         $db = $redis['database'] ?? 0;
         $prefix = $redis['prefix'] ?? 'sess_';
+
+        $redisClient = new \Redis();
+        if (!@$redisClient->pconnect($host, $port, 2)) {
+            throw new \RuntimeException("Cannot connect to Redis at {$host}:$port");
+        }
+        if ($auth && !$redisClient->auth($auth)) {
+            throw new \RuntimeException("Redis auth failed");
+        }
+
+        $redisClient->select($db);
+        $redisClient->close();
+
 
         $savePath = "tcp://{$host}:{$port}?persistent=1&database={$db}&prefix={$prefix}";
 

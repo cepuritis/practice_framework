@@ -2,15 +2,14 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+require __DIR__.'/../vendor/autoload.php';
 require_once(__DIR__ . "/../config/bootstrap.php");
 global $request;
 
-//use Core\Config\Config;
-//
-//$config = new Config();
-//$session = new \Core\User\Session($config);
-//$session->set('test_key', 'test_data');
-//$session->get('test_key');
-//Todo Create Some sort of Object Manager For Dependency Injection
-$frontController = new \Core\Routing\FrontController($request);
+use Core\Config\Config;
+
+$session = app()->make(\Core\User\Session::class);
+$session->set('test_key', 'This is session data set in index.php and stored in redis');
+
+$frontController = app()->make(\Core\Routing\FrontController::class);
 $frontController->dispatch();

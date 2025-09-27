@@ -13,7 +13,7 @@ class HttpRequest implements HttpRequestInterface
     /**
      * @throws InvalidHttpMethod
      */
-    private function __construct()
+    public function __construct()
     {
         //TODO Review which values might need to be escaped
         $this->request[self::METHOD] = HttpRequestMethod::fromString(
@@ -25,18 +25,6 @@ class HttpRequest implements HttpRequestInterface
         $params = [];
         parse_str(parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY) ?? "", $params);
         $this->request[self::PARAMS] = $params;
-    }
-
-    /**
-     * @return HttpRequestInterface
-     */
-    public static function getInstance(): HttpRequestInterface
-    {
-        if (!self::$instance) {
-            self::$instance = new static();
-        }
-
-        return  self::$instance;
     }
 
     /**
