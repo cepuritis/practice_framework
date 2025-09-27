@@ -7,10 +7,20 @@ class Application
     private static ?Application $instance = null;
     private array $instances = [];
     private array $bindings = [];
+    private array $contextualBinding = [];
     private function __construct()
     {
     }
 
+    public function flush(): void
+    {
+        $this->instances = [];
+        $this->bindings = [];
+        $this->contextualBinding = [];
+    }
+    /**
+     * @return Application
+     */
     public static function getInstance(): Application
     {
         if (!self::$instance) {
@@ -20,35 +30,46 @@ class Application
         return self::$instance;
     }
 
-    public function bind(string $abstract, $concrete, $shared = true)
+    public function bind(string $abstract, $concrete, $shared = true): void
     {
         $this->bindings[$abstract] = compact('concrete', 'shared');
     }
 
+    public function bindWithContext(string $abstract, $concrete, string $context, $shared = true): void
+    {
+        $this->contextualBinding[$abstract][$context] = compact('concrete', 'shared');
+    }
+
     /**
      * @param string $class
-     * @param $parameters
-     * @return mixed|void
-     * @throws \ReflectionException
+     * @param array $parameters
+     * @param string|null $currentContext
+     * @return mixed|object|string|null
      */
-    public function make(string $class, $parameters = [])
+    public function make(string $class, array $parameters = [], string $currentContext = null)
     {
         $isShared = true;
         $concrete = $class;
 
-        if (isset($this->instances[$class])) {
-            return $this->instances[$class];
-        }
-
-        if (isset($this->bindings[$class])) {
+        if ($currentContext && isset($this->contextualBinding[$class][$currentContext])) {
+            $binding = $this->contextualBinding[$class][$currentContext];
+            $isShared = $binding['shared'];
+            $concrete = $binding['concrete'];
+        } elseif (isset($this->bindings[$class])) {
             $isShared = $this->bindings[$class]['shared'];
             $concrete = $this->bindings[$class]['concrete'];
+        }
+
+        $key = $currentContext ? $class . '@' . $currentContext : $class;
+
+        if (isset($this->instances[$key])) {
+            return $this->instances[$key];
         }
 
         $instance = $this->build($concrete, $parameters);
 
         if ($isShared) {
-            $this->instances[$class] = $instance;
+            $this->instances[$key] = $instance;
         }
 
         return $instance;
@@ -58,16 +79,22 @@ class Application
      * Use shared instance if already exists, if not create transient instance
      *
      * @param string $class
-     * @param $parameters
-     * @return mixed|object|string|null
+     * @param array $parameters
+     * @param string|null $currentContext
+     * @return mixed
      */
-    public function makeTransient(string $class, $parameters = []): mixed
+    public function makeTransient(string $class, array $parameters = [], string $currentContext = null): mixed
     {
         $concrete = $class;
-        if (isset($this->instances[$class])) {
-            return $this->instances[$class];
+
+        $key = $currentContext ? $class . '@' . $currentContext : $class;
+
+        if (isset($this->instances[$key])) {
+            return $this->instances[$key];
         }
-        if (isset($this->bindings[$class])) {
+        if ($currentContext && isset($this->contextualBinding[$class][$currentContext])) {
+            $concrete = $this->contextualBinding[$class][$currentContext]['concrete'];
+        } elseif (isset($this->bindings[$class])) {
             $concrete = $this->bindings[$class]['concrete'];
         }
 
@@ -77,10 +104,15 @@ class Application
     private function build(string | \Closure $concrete, array $parameters = [], bool $shared = true)
     {
         $instance = null;
+
         if ($concrete instanceof \Closure) {
             $instance = $concrete($this, $parameters);
         } else {
             $reflection = new \ReflectionClass($concrete);
+
+            $getDependency = fn($concrete) => $shared ? $this->make($concrete, [], $reflection->getName())
+                : $this->makeTransient($concrete, [], $reflection->getName());
+
             $constructor = $reflection->getConstructor();
             $dependencies = [];
 
@@ -95,12 +127,12 @@ class Application
                         if (is_string($paramValue)
                             && (!$paramType || !$paramType->isBuiltin())
                             && class_exists($paramValue)) {
-                            $dependencies[] =$shared ? $this->make($paramValue) : $this->makeTransient($paramName);
+                            $dependencies[] = $getDependency($paramValue);
                         } else {
                             $dependencies[] = $paramValue;
                         }
                     } elseif ($paramType && !$paramType->isBuiltin()) {
-                        $dependencies[] = $this->make($paramType->getName());
+                        $dependencies[] = $getDependency($paramType->getName());
                     } elseif ($parameter->isDefaultValueAvailable()) {
                         $dependencies[] = $parameter->getDefaultValue();
                     } else {

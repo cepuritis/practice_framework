@@ -41,7 +41,7 @@ class DefaultRouter extends BaseRouter
         $dependencies = [];
         foreach ($reflectionMethod->getParameters() as $parameter) {
             $paramType = $parameter->getType();
-            $dependencies[] = app()->make($paramType);
+            $dependencies[] = app()->make($paramType->getName());
         }
 
         $reflectionMethod->invokeArgs($controller, $dependencies);

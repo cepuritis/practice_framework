@@ -8,8 +8,8 @@ global $request;
 
 use Core\Config\Config;
 
-$session = app()->make(\Core\User\Session::class);
+$session = app()->get(\Core\User\Session::class);
 $session->set('test_key', 'This is session data set in index.php and stored in redis');
 
-$frontController = app()->make(\Core\Routing\FrontController::class);
+$frontController = app()->get(\Core\Routing\FrontController::class);
 $frontController->dispatch();

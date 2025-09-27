@@ -4,3 +4,4 @@ test/
 .php-cs-fixer.cache
 node_modules
 config/env.php
+.phpunit.result.cache
