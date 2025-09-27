@@ -2,6 +2,8 @@
 
 namespace Core\Contracts;
 
+use Core\Contracts\Http\HttpRequestInterface;
+
 abstract class BaseRouter implements RouterInterface, RouteGeneratorInterface
 {
     public const ROUTER_NAME = 'default';
@@ -15,5 +17,10 @@ abstract class BaseRouter implements RouterInterface, RouteGeneratorInterface
     public function __construct(array $routes)
     {
         $this->routes = array_change_key_case($routes);
+    }
+
+    public function dispatch(HttpRequestInterface $request): void
+    {
+        $this->current[0] = app()->makeTransient($this->current[0]);
     }
 }

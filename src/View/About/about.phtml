@@ -1,3 +1,5 @@
+<?php /** @var \Core\Models\DataObject $data */ ?>
+
 <?= \Core\Helpers\ViewHelper::include("Partial/header") ?>
 
 <main class="min-h-screen flex flex-col">
@@ -6,8 +8,7 @@
     <section class="px-4 py-16 bg-gray-100 text-center">
         <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900">About Us</h1>
         <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-600">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. We believe in building
-            meaningful solutions that make life better.
+            <?= $data->getSessionText() ?>
         </p>
     </section>
 

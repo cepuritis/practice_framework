@@ -32,9 +32,19 @@ class DefaultRouter extends BaseRouter
      */
     public function dispatch(HttpRequestInterface $request): void
     {
-        $controller = new $this->current[0]();
+        parent::dispatch($request);
+
+        $controller = $this->current[0];
         $method = $this->current[1];
-        $controller->$method($request);
+        $reflectionMethod = new \ReflectionMethod($controller, $method);
+
+        $dependencies = [];
+        foreach ($reflectionMethod->getParameters() as $parameter) {
+            $paramType = $parameter->getType();
+            $dependencies[] = app()->make($paramType);
+        }
+
+        $reflectionMethod->invokeArgs($controller, $dependencies);
     }
 
     /**
