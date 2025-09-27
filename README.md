@@ -52,7 +52,7 @@ For JSON response use JsonRenderer and HttpJsonResponse instances respectively. 
 
 ## ViewInterface
 To include a one template in another ViewHelper::include() method can be used specifying the template file and if necessary data that can be used in the included template, data can be either DataObject or an array , but it will be converted to DataObject regardless. It can be accesses through ```$data``` variable from the included template.
-DataObject uses magic __call method to store and get keys for example if you pass an array ['firsName' => 'john', 'lastName' => 'doe'] in the template file this can be used as $data->getFirstName();, $data->getLastName(); The scope is isolated by using Closures so if you do not explicitly send data from
+DataObject uses magic __call method to store and get keys for example if you pass an array ['firsName' => 'john', 'lastName' => 'doe'] in the template file this can be used as ```$data->getFirstName(); $data->getLastName();``` The scope is isolated by using Closures so if you do not explicitly send data from
 parent template to the child template, it won't be available.
 
 ```php
@@ -75,7 +75,59 @@ parent template to the child template, it won't be available.
 </main>
 
 ```
+## Dependency Injection and Interface Binding
 
+You can add any Class to Controller method parameters it will be automatically injected. The same goes for controller constructor. 
+```php
+#[Route('/about')]
+class About
+{
+    #[GET]
+    public function get(HttpRequest $request, Session $userSession): void
+    {
+        $view = new PageRenderer('About/about');
+        $view->setData(new DataObject(['sessionText' => $userSession->get('test_key')]));
+        $view->setTitle("About us");
+        $response = new HttpResponse($view);
+        $response->send();
+    }
+
+}
+
+```
+By Default All Bindings are shared meaning that
+it will return a singleton interface, this is not the case for 'method specific' binding but only if the object has not been bound yet.
+For controller method binding the sames goes also for recursive bounds. If you want all the DIs in controller to be singleton then use constructor binding instead.
+
+Instances can be created and bound through the `app()` function, available anywhere in the app.
+
+- To get an initialized instance, use `app()->make()` or `app()->get()` (`get()` is an alias for `make()`).
+- By default, `make()` and `get()` return **singleton instances**.
+- To get a non-shared instance, use `app()->makeTransient()`.
+  > Note: `makeTransient()` will still return a stored singleton if `make()` was previously called for the same class.
+
+
+If you want to DI an interface it needs to be bound to a class first, Binding can be done inside of config ``` config/bindings.php ``` You can also do contextual binding as in this exampel from one of test cases
+```PHP
+    public function testContextualBindingWorks()
+    {
+        app()->bind(Shape::class, Triangle::class);
+        app()->bindWithContext(Shape::class, Triangle::class, Polygon1::class);
+        app()->bindWithContext(Shape::class, Rectangle::class, Polygon2::class);
+
+        $polygon1 = app()->get(Polygon1::class);
+        $polygon2 = app()->get(Polygon2::class);
+        $polygon3 = app()->get(Polygon3::class);
+
+        $this->assertStringContainsString("Triangle", $polygon1->describe());
+        $this->assertStringContainsString("Rectangle", $polygon2->describe());
+        $this->assertStringContainsString("Triangle", $polygon3->describe());
+        $this->assertNotSame($polygon1, $polygon3);
+    }
+}
+
+
+```
 ## Styling
 The framework uses vite and tailwind, if you add any new tailwind classes that havent been used yet in the project you have to run ```npm run build:css``` this will generate a css file in config/generated/assets. The generated css name contains hash which is diffeent each time and is inserted into the app using ```ViewHelper::getMainStylesheet()``` static method which gets the fileName from the vite manifest.json file, so need to be careful with caching.
 
