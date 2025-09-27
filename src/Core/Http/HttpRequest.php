@@ -3,15 +3,22 @@ namespace Core\Http;
 
 use Core\Contracts\Http\HttpRequestInterface;
 use Core\Contracts\Http\HttpRequestMethod;
+use Core\Exceptions\InvalidHttpMethod;
 
 class HttpRequest implements HttpRequestInterface
 {
     private array $request = [];
     private static ?HttpRequest $instance = null;
 
+    /**
+     * @throws InvalidHttpMethod
+     */
     private function __construct()
     {
-        $this->request[self::METHOD] = HttpRequestMethod::fromString($_SERVER['REQUEST_METHOD']);
+        //TODO Review which values might need to be escaped
+        $this->request[self::METHOD] = HttpRequestMethod::fromString(
+            $_SERVER['REQUEST_METHOD'] ?? HttpRequestMethod::GET->value
+        );
         $this->request[self::SCHEME] = $_SERVER['REQUEST_SCHEME'];
         $this->request[self::HOST] = $_SERVER['HTTP_HOST'];
         $this->request[self::PATH] = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);

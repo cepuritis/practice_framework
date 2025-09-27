@@ -28,7 +28,7 @@ class DataObject
 
         if (str_starts_with($name, 'set')) {
             $key = $this->methodToKeyName($name, 'set');
-            $this->data[$key] = $arguments[0] ?? null;
+            return $this->data[$key] = $arguments[0] ?? null;
         }
 
         return null;
