@@ -1,0 +1,2 @@
+# Xdebug 3 recommended way — forces debug mode and immediate connection attempt
+php -dxdebug.mode=debug -dxdebug.start_with_request=yes vendor/bin/phpunit --filter testContextualBindingWorks tests/ApplicationTest.php
