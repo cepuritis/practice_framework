@@ -48,9 +48,13 @@ class ApplicationTest extends TestCase
         $polygon2 = app()->get(Polygon2::class);
         $polygon3 = app()->get(Polygon3::class);
 
+        $triangle = app()->make(Triangle::class);
+
         $this->assertStringContainsString("Triangle", $polygon1->describe());
         $this->assertStringContainsString("Rectangle", $polygon2->describe());
         $this->assertStringContainsString("Triangle", $polygon3->describe());
         $this->assertNotSame($polygon1, $polygon3);
+        $this->assertSame($triangle, $polygon3->getShape());
     }
+
 }

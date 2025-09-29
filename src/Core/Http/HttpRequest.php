@@ -8,7 +8,6 @@ use Core\Exceptions\InvalidHttpMethod;
 class HttpRequest implements HttpRequestInterface
 {
     private array $request = [];
-    private static ?HttpRequest $instance = null;
 
     /**
      * @throws InvalidHttpMethod
@@ -25,6 +24,7 @@ class HttpRequest implements HttpRequestInterface
         $params = [];
         parse_str(parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY) ?? "", $params);
         $this->request[self::PARAMS] = $params;
+        $this->request[self::POST_DATA] = $_POST ?? [];
     }
 
     /**
@@ -65,5 +65,16 @@ class HttpRequest implements HttpRequestInterface
     public function getParams(): array
     {
         return $this->request[self::PARAMS];
+    }
+
+    public function getPostData(): array
+    {
+        return $this->request[self::POST_DATA];
+    }
+
+    public function redirect(string $path, HttpRequestMethod $method = HttpRequestMethod::GET)
+    {
+        $this->request[self::PATH] = $path;
+        $this->request[self::METHOD] = $method;
     }
 }

@@ -16,7 +16,11 @@ class FrontController
     {
         $this->request = $request;
     }
-    public function dispatch()
+
+    /**
+     * @return void
+     */
+    public function dispatch(): void
     {
         $matched = false;
         /**
@@ -35,7 +39,10 @@ class FrontController
         }
     }
 
-    private function handleNotFound()
+    /**
+     * @return void
+     */
+    private function handleNotFound(): void
     {
         $response = new HttpResponse();
         $response->setCode(HttpResponseCode::NOT_FOUND);

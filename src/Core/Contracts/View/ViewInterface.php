@@ -2,15 +2,15 @@
 
 namespace Core\Contracts\View;
 
-use Core\Models\DataObject;
+use Core\Models\Data\DataCollection;
 
 interface ViewInterface
 {
     /**
-     * @param DataObject|null $viewData
+     * @param DataCollection|null $viewData
      * @return string
      */
-    public function render(?DataObject $viewData = null): string;
+    public function render(?DataCollection $viewData = null): string;
 
     public function getTemplateName(): string;
 }

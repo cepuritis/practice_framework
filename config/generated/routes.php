@@ -27,6 +27,15 @@ return [
         'GET' => 'get',
       ],
     ],
+    '/contactus' => 
+    [
+      'class' => 'Controller\\ContactUs',
+      'methods' => 
+      [
+        'GET' => 'get',
+        'POST' => 'post',
+      ],
+    ],
     '/' => 
     [
       'class' => 'Controller\\Home\\Home',

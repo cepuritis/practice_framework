@@ -15,4 +15,9 @@ class Polygon2
     {
         return sprintf("%s has %s sides", $this->shape->getName(), $this->shape->getSides());
     }
+
+    public function &getShape(): Shape
+    {
+        return $this->shape;
+    }
 }

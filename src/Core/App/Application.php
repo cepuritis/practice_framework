@@ -50,26 +50,57 @@ class Application
     {
         $isShared = true;
         $concrete = $class;
+        $useContextualBinding = false;
+        $instance = null;
 
         if ($currentContext && isset($this->contextualBinding[$class][$currentContext])) {
             $binding = $this->contextualBinding[$class][$currentContext];
+            $useContextualBinding = true;
+        } elseif (isset($this->bindings[$class])) {
+            $binding = $this->bindings[$class];
+        }
+
+        if (isset($binding)) {
             $isShared = $binding['shared'];
             $concrete = $binding['concrete'];
-        } elseif (isset($this->bindings[$class])) {
-            $isShared = $this->bindings[$class]['shared'];
-            $concrete = $this->bindings[$class]['concrete'];
         }
 
-        $key = $currentContext ? $class . '@' . $currentContext : $class;
+        $key = $useContextualBinding ? $class . '@' . $currentContext : $class;
 
-        if (isset($this->instances[$key])) {
-            return $this->instances[$key];
-        }
+        $instance = $this->getInstanceIfExists($key, $concrete, $isShared, $useContextualBinding, $currentContext);
 
-        $instance = $this->build($concrete, $parameters);
+        $instance = $instance ?? $this->build($concrete, $parameters);
 
         if ($isShared) {
             $this->instances[$key] = $instance;
+        }
+
+        return $instance;
+    }
+
+    private function getInstanceIfExists($key, $concrete, $isShared, $useContextualBinding, $currentContext)
+    {
+        $instance = null;
+        if (isset($this->instances[$key])) {
+            return $this->instances[$key];
+        } elseif ($isShared && $this->hasInstanceOf($concrete)) {
+            //If the same context and shared instance has already been assigned to interface, reuse it
+            foreach ($this->instances as $existingKey => $existingInstance) {
+                if (get_class($existingInstance) === $concrete) {
+                    if (str_contains($existingKey, '@')) {
+                        if ($useContextualBinding) {
+                            $contextPart = strstr('@', $existingKey, 2)[1];
+                            if ($contextPart === $currentContext) {
+                                $instance = $existingInstance;
+                                break;
+                            }
+                        }
+                        continue;
+                    }
+                    $instance = $existingInstance;
+                    break;
+                }
+            }
         }
 
         return $instance;
@@ -87,18 +118,23 @@ class Application
     {
         $concrete = $class;
 
-        $key = $currentContext ? $class . '@' . $currentContext : $class;
-
-        if (isset($this->instances[$key])) {
-            return $this->instances[$key];
-        }
+        $useContextualBinding = false;
         if ($currentContext && isset($this->contextualBinding[$class][$currentContext])) {
+            $useContextualBinding = true;
             $concrete = $this->contextualBinding[$class][$currentContext]['concrete'];
         } elseif (isset($this->bindings[$class])) {
             $concrete = $this->bindings[$class]['concrete'];
         }
 
-        return $this->build($concrete, $parameters, false);
+        $key = $useContextualBinding ? $class . '@' . $currentContext : $class;
+
+        if (isset($this->instances[$key])) {
+            return $this->instances[$key];
+        }
+
+        $instance = $this->getInstanceIfExists($key, $concrete, true, $useContextualBinding, $currentContext);
+
+        return $instance ?? $this->build($concrete, $parameters, false);
     }
 
     private function build(string | \Closure $concrete, array $parameters = [], bool $shared = true)
@@ -110,7 +146,7 @@ class Application
         } else {
             $reflection = new \ReflectionClass($concrete);
 
-            $getDependency = fn($concrete) => $shared ? $this->make($concrete, [], $reflection->getName())
+            $getDependency = fn ($concrete) => $shared ? $this->make($concrete, [], $reflection->getName())
                 : $this->makeTransient($concrete, [], $reflection->getName());
 
             $constructor = $reflection->getConstructor();
@@ -157,4 +193,23 @@ class Application
     {
         return $this->make($class, $parameters);
     }
+
+    /**
+     * @param mixed $instance
+     * @return mixed
+     */
+    public function hasInstanceOf(mixed $instance): mixed
+    {
+        return in_array($instance, array_values(array_map(fn ($instance) => get_class($instance), $this->instances)));
+    }
+
+//    /**
+//     * @return void
+//     */
+//    public function getInstances()
+//    {
+//        foreach ($this->instances as $className => $object) {
+//            echo $className . " => (". spl_object_id($object) .")" . get_class($object) . "</br>";
+//        }
+//    }
 }

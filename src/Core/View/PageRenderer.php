@@ -3,15 +3,18 @@
 namespace Core\View;
 
 use Core\Contracts\View\ViewInterface;
-use Core\Models\DataObject;
+use Core\Models\Data\DataCollection;
 use Core\Tags\LinkTag;
 use Core\Tags\MetaTag;
 use Core\Tags\ScriptTag;
+use Core\View\Traits\FlashMessageRenderer;
 use RuntimeException;
 
 class PageRenderer implements ViewInterface
 {
-    protected ?DataObject $data;
+    use FlashMessageRenderer;
+
+    protected ?DataCollection $data;
 
     /**
      * @var array<ViewInterface> $views
@@ -31,15 +34,16 @@ class PageRenderer implements ViewInterface
     public function __construct(
         string $initialTemplate,
         string $baseTemplate = self::DEFAULT_BASE_TEMPLATE,
-        ?DataObject $data = null
+        ?DataCollection $data = null
     ) {
         $this->initialTemplate = $initialTemplate;
         $this->baseTemplate = VIEW_PATH . "/{$baseTemplate}.phtml";
-        $this->data = is_null($data) ? new DataObject() : $data;
+        $this->data = is_null($data) ? new DataCollection() : $data;
         self::$current = $this;
+        $this->addFlashMessagesToData();
     }
 
-    public function setData(DataObject $data, bool $merge = true)
+    public function setData(DataCollection $data, bool $merge = true)
     {
         if ($merge) {
             $data = $data->merge($this->data);
@@ -49,12 +53,12 @@ class PageRenderer implements ViewInterface
     }
 
     /**
-     * @param array $viewData
+     * @param DataCollection $viewData
      * @return string
      */
-    public function render(?DataObject $viewData = null): string
+    public function render(?DataCollection $viewData = null): string
     {
-        if ($viewData instanceof DataObject) {
+        if ($viewData instanceof DataCollection) {
             $viewData = $viewData->merge($this->data);
         } else {
             $viewData = $this->data;
@@ -62,7 +66,7 @@ class PageRenderer implements ViewInterface
 
         $templatePath =  VIEW_PATH . "/{$this->initialTemplate}.phtml";
 
-        $render = function (DataObject $data) use ($templatePath) {
+        $render = function (DataCollection $data) use ($templatePath) {
             if (!file_exists($templatePath) || $templatePath === $this->baseTemplate) {
                 throw new RuntimeException("Invalid template file specified " . $templatePath);
             }

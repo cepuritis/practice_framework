@@ -1,9 +1,6 @@
-<?php /** @var \Core\Models\DataObject $data */ ?>
-
-<?= \Core\Helpers\ViewHelper::include("Partial/header") ?>
+<?php /** @var \Core\Models\Data\DataCollection $data */ ?>
 
 <main class="min-h-screen flex flex-col">
-
     <!-- Hero -->
     <section class="px-4 py-16 bg-gray-100 text-center">
         <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900">About Us</h1>
@@ -81,23 +78,4 @@
             </div>
         </div>
     </section>
-
-    <!-- Footer -->
-    <footer class="mt-auto bg-white border-t border-gray-200">
-        <div class="max-w-6xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-md bg-blue-600 flex items-center justify-center text-white font-bold">LI</div>
-                <div>
-                    <p class="font-semibold">LoremIpsum</p>
-                    <p class="text-sm text-gray-500">Built with care.</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-6">
-                <a href="/privacy" class="text-sm text-gray-600 hover:text-blue-600">Privacy</a>
-                <a href="/terms" class="text-sm text-gray-600 hover:text-blue-600">Terms</a>
-                <a href="/contact" class="text-sm text-gray-600 hover:text-blue-600">Contact</a>
-            </div>
-        </div>
-    </footer>
 </main>

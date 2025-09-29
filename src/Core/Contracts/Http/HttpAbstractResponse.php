@@ -24,12 +24,34 @@ abstract class HttpAbstractResponse implements HttpResponseInterface
 
     public function send(): void
     {
-        if (!$this->content) {
+        if (!$this->isStatusCodeNotRedirect()) {
+            return;
+        }
+
+        if ($this->isStatusCodeNotRedirect() && !$this->content) {
             throw new TemplateNotSetException("Response Content Not set !");
         }
 
         http_response_code($this->responseCode->value);
         echo $this->content->render();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isStatusCodeNotRedirect(): bool
+    {
+        if (in_array($this->responseCode, [
+            HttpResponseCode::PERMANENT_REDIRECT,
+            HttpResponseCode::TEMPORARY_REDIRECT,
+            HttpResponseCode::SEE_OTHER,
+            HttpResponseCode::MOVED_PERMANENTLY,
+            HttpResponseCode::FOUND
+        ])) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -49,6 +71,11 @@ abstract class HttpAbstractResponse implements HttpResponseInterface
         return $this->responseCode;
     }
 
+    /**
+     * @param string $key
+     * @param string $value
+     * @return void
+     */
     public function setHeader(string $key, string $value): void
     {
         header("{$key}: {$value}");

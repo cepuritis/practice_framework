@@ -2,10 +2,11 @@
 
 namespace Core\Config;
 
-use Core\Models\DataObject;
+use Core\Models\Data\DataObject;
 
 /**
  * @method getSession()
+ * @method getDatabase()
  */
 class Config
 {
