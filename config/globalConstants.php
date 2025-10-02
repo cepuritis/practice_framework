@@ -1,6 +1,7 @@
 <?php
 define('CONFIG_PATH', __DIR__);
-define('ROUTER_PATH', __DIR__ . "/../src/Core/Routing/Routers");
-define('CONTROLLER_PATH', __DIR__ . "/../src/Controller");
-define('VIEW_PATH', __DIR__ . "/../src/View");
-define('ASSETS_PATH', __DIR__ . "/../src/View/assets");
+define('ROUTER_PATH', realpath(__DIR__ . "/../src/Core/Routing/Routers"));
+define('CONTROLLER_PATH', realpath(__DIR__ . "/../src/Controller"));
+define('VIEW_PATH', realpath(__DIR__ . "/../src/View"));
+define('ASSETS_PATH', realpath(__DIR__ . "/../src/View/assets"));
+define('CSRF_TOKEN_BITS', 128);

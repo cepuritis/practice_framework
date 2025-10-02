@@ -1,6 +1,6 @@
 <?php
 
-namespace Practice\Tests\Fixtures\Application\Shapes;
+namespace Tests\Fixtures\Application\Shapes;
 
 interface Shape
 {

@@ -1,0 +1,9 @@
+<?php
+/**
+ * @var \Core\View\Widgets\Message $message
+ * @var \Core\Models\Data\DataCollection $data
+ */
+foreach ($data->getMessages() as $message):
+    echo $message->render();
+endforeach;
+?>

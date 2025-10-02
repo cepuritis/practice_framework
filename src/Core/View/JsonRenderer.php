@@ -3,9 +3,8 @@
 namespace Core\View;
 
 use Core\Contracts\View\JsonViewInterface;
-use Core\Contracts\View\ViewInterface;
 use Core\Helpers\JsonHelper;
-use Core\Models\DataObject;
+use Core\Models\Data\DataCollection;
 
 class JsonRenderer implements JsonViewInterface
 {
@@ -27,7 +26,11 @@ class JsonRenderer implements JsonViewInterface
     }
 
 
-    public function render(DataObject $viewData = null): string
+    /**
+     * @param DataCollection|null $viewData
+     * @return string
+     */
+    public function render(DataCollection $viewData = null): string
     {
         return $this->getJsonData();
     }
@@ -52,6 +55,6 @@ class JsonRenderer implements JsonViewInterface
 
     public function getTemplateName(): string
     {
-        'json';
+        return 'json';
     }
 }

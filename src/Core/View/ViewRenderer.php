@@ -2,28 +2,29 @@
 namespace Core\View;
 
 use Core\Contracts\View\ViewInterface;
-use Core\Exception\TemplateNotSetException;
-use Core\Helpers\JsonHelper;
-use Core\Models\DataObject;
-use Core\Tags\LinkTag;
-use Core\Tags\MetaTag;
-use Core\Tags\ScriptTag;
+use Core\Models\Data\DataCollection;
+use Core\View\Traits\FlashMessageRenderer;
 use RuntimeException;
 
 class ViewRenderer implements ViewInterface
 {
+    use FlashMessageRenderer;
     private string $template;
-    private ?DataObject $data;
+    private ?DataCollection $data;
 
-    public function __construct(string $template, ?DataObject $data = null)
+    public function __construct(string $template, ?DataCollection $data = null)
     {
         $this->template = $template;
-        $this->data = is_null($data) ? new DataObject() : $data;
+        $this->data = is_null($data) ? new DataCollection() : $data;
+        $this->addFlashMessagesToData();
     }
 
-    public function render(?DataObject $viewData = null): string
+    /**
+     * @throws \ReflectionException
+     */
+    public function render(?DataCollection $viewData = null): string
     {
-        if ($viewData instanceof DataObject) {
+        if ($viewData instanceof DataCollection) {
             $viewData = $viewData->merge($this->data);
         } else {
             $viewData = $this->data;
@@ -34,7 +35,7 @@ class ViewRenderer implements ViewInterface
             throw new RuntimeException("Template not found: {$file}");
         }
 
-        $render = function (string $file, DataObject $data) {
+        $render = function (string $file, DataCollection $data) {
             ob_start();
             include $file;
             return ob_get_clean();

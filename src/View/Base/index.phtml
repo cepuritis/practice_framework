@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \Core\Models\DataObject $data
+ * @var \Core\Models\Data\DataCollection $data
  */
 
 /**
@@ -50,9 +50,11 @@
     <!-- JS at top only if absolutely needed -->
 </head>
 <body class="bg-gray-100 text-gray-800 antialiased">
+<?= \Core\Helpers\ViewHelper::include("Partial/header") ?>
 <?php
 /** @var  $template */
 echo $template;
 ?>
+<?= \Core\Helpers\ViewHelper::include("Partial/footer") ?>
 </body>
 </html>

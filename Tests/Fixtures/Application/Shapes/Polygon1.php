@@ -1,6 +1,6 @@
 <?php
 
-namespace Practice\Tests\Fixtures\Application\Shapes;
+namespace Tests\Fixtures\Application\Shapes;
 
 class Polygon1
 {
@@ -14,5 +14,10 @@ class Polygon1
     public function describe(): string
     {
         return sprintf("%s has %s sides", $this->shape->getName(), $this->shape->getSides());
+    }
+
+    public function &getShape(): Shape
+    {
+        return $this->shape;
     }
 }

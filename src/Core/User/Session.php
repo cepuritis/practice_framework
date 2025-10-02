@@ -3,16 +3,26 @@
 namespace Core\User;
 
 use Core\Config\Config;
+use Core\Config\Helpers\RedisConfig;
+use Core\Contracts\Session\SessionStorageInterface;
+use http\Exception\RuntimeException;
 
-class Session
+class Session implements SessionStorageInterface
 {
+    public const FLASH_DATA_KEY = 'FLASH_DATA';
     public const REDIS = 'redis';
+
+    private ?array $flashData = null;
     public function __construct(Config $config)
     {
+        if (app()->hasInstanceOf(static::class)) {
+            throw new \RuntimeException("Attempting to create multiple Session instances - not allowed");
+        }
+
         /** @var string $sessionStorage */
         $sessionStorage = $config->getSession()[Config::SESSION_STORAGE];
         if ($sessionStorage === Session::REDIS) {
-            $this->initRedisSessionStorage($config->getSession()[self::REDIS]);
+            $this->initRedisSessionStorage(new RedisConfig($config));
         } else {
             $this->initFileSessionStorage($config->getSession()['save_path'] ?? "");
         }
@@ -26,7 +36,7 @@ class Session
      * @param array $redis
      * @return void
      */
-    private function initRedisSessionStorage(array $redis): void
+    private function initRedisSessionStorage(RedisConfig $redis): void
     {
         if (!extension_loaded('redis')) {
             throw new \RuntimeException(
@@ -35,15 +45,15 @@ class Session
             );
         }
 
-        if (empty($redis['host']) || empty($redis['port'])) {
+        if (is_null($redis->host) || is_null($redis->port)) {
             throw new \RuntimeException("Redis session config requires 'host' and 'port'.");
         }
 
-        $host = $redis['host'];
-        $port= $redis['port'];
-        $auth = $redis['auth'] ?? null;
-        $db = $redis['database'] ?? 0;
-        $prefix = $redis['prefix'] ?? 'sess_';
+        $host = $redis->host;
+        $port= $redis->port;
+        $auth = $redis->auth ?? null;
+        $db = $redis->database ?? 0;
+        $prefix = $redis->prefix ?? 'sess_';
 
         $redisClient = new \Redis();
         if (!@$redisClient->pconnect($host, $port, 2)) {
@@ -67,6 +77,10 @@ class Session
         ini_set('session.save_path', $savePath);
     }
 
+    /**
+     * @param string $sessionDir
+     * @return void
+     */
     private function initFileSessionStorage(string $sessionDir): void
     {
         if ($sessionDir) {
@@ -77,11 +91,11 @@ class Session
     /**
      * @param string $key
      * @param mixed $value
-     * @return void
+     * @return mixed
      */
-    public function set(string $key, mixed $value): void
+    public function set(string $key, mixed $value): mixed
     {
-        $_SESSION[$key] = $value;
+        return $_SESSION[$key] = $value;
     }
 
     /**
@@ -90,6 +104,47 @@ class Session
      */
     public function get(string $key): mixed
     {
-        return $_SESSION[$key];
+        return $_SESSION[$key] ?? null;
+    }
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    public function remove(string $key): mixed
+    {
+        if (isset($_SESSION[$key])) {
+            $value = $_SESSION[$key];
+            unset($_SESSION[$key]);
+            return $value;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array|string $data
+     * @return void
+     */
+    public function addFlash($key, array | string $data, bool $replace = true): void
+    {
+        if (!$replace && isset($_SESSION[self::FLASH_DATA_KEY][$key])) {
+            $_SESSION[self::FLASH_DATA_KEY][$key][] = $data;
+        } else {
+            $_SESSION[self::FLASH_DATA_KEY][$key] = [$data];
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getFlash(): array
+    {
+        if (is_null($this->flashData)) {
+            $this->flashData = $_SESSION[self::FLASH_DATA_KEY] ?? [];
+            unset($_SESSION[self::FLASH_DATA_KEY]);
+        }
+
+        return $this->flashData;
     }
 }

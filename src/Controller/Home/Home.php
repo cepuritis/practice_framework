@@ -5,7 +5,7 @@ use Core\Attributes\HttpRequest\GET;
 use Core\Attributes\HttpRequest\Route;
 use Core\Http\HttpRequest;
 use Core\Http\HttpResponse;
-use Core\Models\DataObject;
+use Core\Models\Data\DataCollection;
 use Core\Tags\LinkTag;
 use Core\Tags\MetaTag;
 use Core\Tags\ScriptTag;
@@ -18,7 +18,7 @@ class Home
     public function getPath(HttpRequest $request)
     {
         $view = new PageRenderer("Home/index");
-        $view->setData(new DataObject(['firstName' => 'Aigars', 'lastName' => 'Cepuritis']));
+        $view->setData(new DataCollection(['firstName' => 'Aigars', 'lastName' => 'Cepuritis']));
         $view->setTitle("Home Page");
         $meta = new MetaTag(
             [

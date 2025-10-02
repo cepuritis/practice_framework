@@ -17,5 +17,8 @@
       "files": [
         "src/Core/Helpers/Application.php"
         ]
-    }
+    },
+  "require": {
+    "ext-pdo": "*"
+  }
 }

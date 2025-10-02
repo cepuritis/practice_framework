@@ -1,17 +1,15 @@
 <?php
 
-namespace tests;
+namespace Tests;
 
 use Core\App\Application;
-use Core\Contracts\Http\HttpRequestInterface;
-use Core\Http\HttpRequest;
 use PHPUnit\Framework\TestCase;
-use Practice\Tests\Fixtures\Application\Shapes\Polygon1;
-use Practice\Tests\Fixtures\Application\Shapes\Polygon2;
-use Practice\Tests\Fixtures\Application\Shapes\Polygon3;
-use Practice\Tests\Fixtures\Application\Shapes\Rectangle;
-use Practice\Tests\Fixtures\Application\Shapes\Shape;
-use Practice\Tests\Fixtures\Application\Shapes\Triangle;
+use Tests\Fixtures\Application\Shapes\Polygon1;
+use Tests\Fixtures\Application\Shapes\Polygon2;
+use Tests\Fixtures\Application\Shapes\Polygon3;
+use Tests\Fixtures\Application\Shapes\Rectangle;
+use Tests\Fixtures\Application\Shapes\Shape;
+use Tests\Fixtures\Application\Shapes\Triangle;
 
 class ApplicationTest extends TestCase
 {
@@ -48,9 +46,13 @@ class ApplicationTest extends TestCase
         $polygon2 = app()->get(Polygon2::class);
         $polygon3 = app()->get(Polygon3::class);
 
+        $triangle = app()->make(Triangle::class);
+
         $this->assertStringContainsString("Triangle", $polygon1->describe());
         $this->assertStringContainsString("Rectangle", $polygon2->describe());
         $this->assertStringContainsString("Triangle", $polygon3->describe());
         $this->assertNotSame($polygon1, $polygon3);
+        $this->assertSame($triangle, $polygon3->getShape());
     }
+
 }

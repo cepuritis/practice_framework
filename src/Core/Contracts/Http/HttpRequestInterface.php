@@ -7,4 +7,5 @@ interface HttpRequestInterface
     public const HOST = 'HOST';
     public const PATH = 'PATH';
     public const PARAMS = 'PARAMS';
+    public const POST_DATA = 'POST_DATA';
 }

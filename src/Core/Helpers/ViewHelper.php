@@ -3,14 +3,17 @@
 namespace Core\Helpers;
 
 use Core\Exceptions\ViteManifestException;
-use Core\Models\DataObject;
+use Core\Models\Data\DataCollection;
 use Core\View\PageRenderer;
 use Core\View\ViewRenderer;
-use RuntimeException;
 
 class ViewHelper
 {
     const STYLE_MAIN_VIEW = 'src/View/assets/css/app.css';
+
+    /**
+     * @return array
+     */
     private static function getViteManifestData(): array
     {
         $path = CONFIG_PATH . '/generated/viteManifest.json';
@@ -24,6 +27,9 @@ class ViewHelper
         return $data;
     }
 
+    /**
+     * @return string
+     */
     public static function getMainStylesheet()
     {
         $data = self::getViteManifestData();
@@ -35,10 +41,16 @@ class ViewHelper
         return '/build/' . $data[self::STYLE_MAIN_VIEW]['file'];
     }
 
-    public static function include(string $template, DataObject|array $data = [])
+    /**
+     * @param string $template
+     * @param DataCollection|array $data
+     * @return string
+     * @throws \ReflectionException
+     */
+    public static function include(string $template, DataCollection|array $data = [])
     {
-        if (!($data instanceof DataObject)) {
-            $data = new DataObject($data);
+        if (!($data instanceof DataCollection)) {
+            $data = new DataCollection($data);
         }
         $view = new ViewRenderer($template, $data);
         PageRenderer::$current->addView($view);

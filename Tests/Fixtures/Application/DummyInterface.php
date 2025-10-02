@@ -1,5 +1,5 @@
 <?php
-namespace Practice\Tests\Fixtures\Application;
+namespace Tests\Fixtures\Application;
 
 interface DummyInterface
 {
