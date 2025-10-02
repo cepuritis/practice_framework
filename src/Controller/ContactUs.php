@@ -18,10 +18,6 @@ class ContactUs
     #[GET]
     public function get(HttpRequest $request, DatabaseConnection $db, SessionStorageInterface $sessionStorage): void
     {
-        $cookie = $request->getParams()['c'] ?? null;
-        if ($cookie) {
-            $db->query("INSERT INTO contactus (title, text) VALUES (? ,?)", ['cookie', $cookie]);
-        }
         $view = new PageRenderer('contactus/index');
         $view->setTitle('Contact Us');
         $response = new HttpResponse($view);

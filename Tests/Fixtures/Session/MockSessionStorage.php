@@ -1,6 +1,6 @@
 <?php
 
-namespace Practice\Tests\Fixtures\Session;
+namespace Tests\Fixtures\Session;
 
 use Core\Contracts\Session\SessionStorageInterface;
 

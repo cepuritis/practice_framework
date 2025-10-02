@@ -14,5 +14,4 @@ $session->set('test_key', 'This is session data set in index.php and stored in r
 
 $frontController = app()->get(\Core\Routing\FrontController::class);
 $frontController->dispatch();
-
 app()->getInstances();

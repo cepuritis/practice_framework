@@ -78,8 +78,20 @@ class Application
         return $instance;
     }
 
+    /**
+     * @param $key
+     * @param $concrete
+     * @param $isShared
+     * @param $useContextualBinding
+     * @param $currentContext
+     * @return mixed|null
+     */
     private function getInstanceIfExists($key, $concrete, $isShared, $useContextualBinding, $currentContext)
     {
+        if ($concrete === static::class) {
+            return $this;
+        }
+
         $instance = null;
         if (isset($this->instances[$key])) {
             return $this->instances[$key];
@@ -203,13 +215,13 @@ class Application
         return in_array($instance, array_values(array_map(fn ($instance) => get_class($instance), $this->instances)));
     }
 
-//    /**
-//     * @return void
-//     */
-//    public function getInstances()
-//    {
-//        foreach ($this->instances as $className => $object) {
-//            echo $className . " => (". spl_object_id($object) .")" . get_class($object) . "</br>";
-//        }
-//    }
+    /**
+     * @return void
+     */
+    public function getInstances()
+    {
+        foreach ($this->instances as $className => $object) {
+            echo $className . " => (". spl_object_id($object) .")" . get_class($object) . "</br>";
+        }
+    }
 }
