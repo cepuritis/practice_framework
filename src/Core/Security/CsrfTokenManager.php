@@ -4,6 +4,8 @@ namespace Core\Security;
 
 use Core\Contracts\Session\SessionStorageInterface;
 use Core\Contracts\Utils\ClockInterface;
+use Core\Exceptions\Csrf\CsrfInvalidException;
+use Core\Exceptions\Csrf\CsrfMissingException;
 use Random\RandomException;
 
 /**
@@ -16,6 +18,7 @@ use Random\RandomException;
 class CsrfTokenManager
 {
     public const TOKEN_KEY = 'csrf_token';
+    public const FORM_NAME = '_csrf';
     public const TOKEN_LIFETIME = 86400;
     public const GRACE_PERIOD = 3600;
 
@@ -131,6 +134,7 @@ class CsrfTokenManager
     /**
      * @param string $value
      * @return bool
+     * @throws RandomException
      */
     public function isTokenValid(string $value): bool
     {
@@ -158,5 +162,27 @@ class CsrfTokenManager
         }
 
         return false;
+    }
+
+    /**
+     * @param string|null $token
+     * @return void
+     * @throws CsrfMissingException|CsrfInvalidException|RandomException
+     */
+    public function validateToken(?string $token): void
+    {
+        if (!$token) {
+            throw new CsrfMissingException("Missing Csrf Token!");
+        } elseif (!$this->isTokenValid($token)) {
+            throw new CsrfInvalidException("The provided CSRF token is invalid!");
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function input(): string
+    {
+        return '<input type="hidden" name="' . self::FORM_NAME . '" value="' . htmlspecialchars($this->getToken(), ENT_QUOTES) . '">';
     }
 }

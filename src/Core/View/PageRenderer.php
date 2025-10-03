@@ -4,6 +4,7 @@ namespace Core\View;
 
 use Core\Contracts\View\ViewInterface;
 use Core\Models\Data\DataCollection;
+use Core\Security\CsrfTokenManager;
 use Core\Tags\LinkTag;
 use Core\Tags\MetaTag;
 use Core\Tags\ScriptTag;
@@ -31,6 +32,10 @@ class PageRenderer implements ViewInterface
     //TODO Remove when ObjectManager implemented
     public static ?PageRenderer $current = null;
 
+    /**
+     * @param string $initialTemplate
+     * @param string $baseTemplate
+     */
     public function __construct(
         string $initialTemplate,
         string $baseTemplate = self::DEFAULT_BASE_TEMPLATE,
@@ -70,6 +75,7 @@ class PageRenderer implements ViewInterface
             if (!file_exists($templatePath) || $templatePath === $this->baseTemplate) {
                 throw new RuntimeException("Invalid template file specified " . $templatePath);
             }
+            $data['csrf'] = app()->make(CsrfTokenManager::class)->input();
             $template = null;
             ob_start();
             include $templatePath;
