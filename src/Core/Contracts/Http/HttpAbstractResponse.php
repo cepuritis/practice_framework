@@ -28,7 +28,7 @@ abstract class HttpAbstractResponse implements HttpResponseInterface
             return;
         }
 
-        if (!$this->content) {
+        if ($this->isStatusCodeNotRedirect() && !$this->content) {
             throw new TemplateNotSetException("Response Content Not set !");
         }
 

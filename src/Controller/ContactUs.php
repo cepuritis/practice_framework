@@ -43,7 +43,7 @@ class ContactUs
             );
             $response->withMessage(MessageType::SUCCESS, "The message was submitted successfully!");
         } catch (\Exception $e) {
-            $response->withMessage(MessageType::ERROR, "Something went wrong")->withPostData();
+            $response->withMessage(MessageType::ERROR, "Something went wrong");
         }
 
         $response->redirect('/contactus');

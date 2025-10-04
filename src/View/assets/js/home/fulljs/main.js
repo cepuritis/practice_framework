@@ -1,1 +1,0 @@
-window.data = "Hello World";

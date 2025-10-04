@@ -3,7 +3,6 @@
 namespace Core\Http;
 
 use Core\Contracts\Http\HttpAbstractResponse;
-use Core\Contracts\Http\HttpRequestInterface;
 use Core\Contracts\Http\HttpResponseCode;
 use Core\Contracts\Http\HttpResponseInterface;
 use Core\Contracts\View\MessageType;
@@ -55,15 +54,5 @@ class HttpResponse extends HttpAbstractResponse implements HttpResponseInterface
     public function withMessage(MessageType $type, string $message, bool $replaceMessage = false): self
     {
         return $this->with('message', [$type->value => $message], $replaceMessage);
-    }
-
-    /**
-     * @return $this
-     */
-    public function withPostData(): self
-    {
-        /** @var HttpRequestInterface $request */
-        $request = app()->make(HttpRequestInterface::class);
-        return $this->with('oldPostData', $request->getPostData());
     }
 }

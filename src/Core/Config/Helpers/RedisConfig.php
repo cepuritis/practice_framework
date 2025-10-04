@@ -3,7 +3,6 @@
 namespace Core\Config\Helpers;
 
 use Core\Config\Config;
-use Core\Contracts\Config\ConfigInterface;
 
 class RedisConfig
 {
@@ -14,11 +13,11 @@ class RedisConfig
     public ?string $prefix;
 
     /**
-     * @param ConfigInterface|array $config
+     * @param Config|array $config
      */
-    public function __construct(ConfigInterface | array $config)
+    public function __construct(Config | array $config)
     {
-        if ($config instanceof  ConfigInterface) {
+        if ($config instanceof  $config) {
             $config = $config->getSession()['redis'];
         }
 
