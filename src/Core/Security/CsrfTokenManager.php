@@ -16,7 +16,12 @@ use Random\RandomException;
 class CsrfTokenManager
 {
     public const TOKEN_KEY = 'csrf_token';
+<<<<<<< Updated upstream
     public const TOKEN_LIFETIME = 86400;
+=======
+    public const FORM_NAME = '_csrf';
+    public const TOKEN_LIFETIME = 172800;
+>>>>>>> Stashed changes
     public const GRACE_PERIOD = 3600;
 
     public const MAX_TOKENS = 3;
@@ -159,4 +164,30 @@ class CsrfTokenManager
 
         return false;
     }
+<<<<<<< Updated upstream
+=======
+
+    /**
+     * @param string|null $token
+     * @return void
+     * @throws CsrfMissingException|CsrfInvalidException|RandomException
+     */
+    public function validateToken(?string $token): void
+    {
+        if (!$token) {
+            throw new CsrfMissingException("Missing Csrf Token!");
+        } elseif (!$this->isTokenValid($token)) {
+            throw new CsrfInvalidException("The provided CSRF token is invalid!");
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function input(): string
+    {
+        return '<input type="hidden" name="'
+            . self::FORM_NAME . '" value="' . htmlspecialchars($this->getToken(), ENT_QUOTES) . '">';
+    }
+>>>>>>> Stashed changes
 }

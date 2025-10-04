@@ -78,4 +78,12 @@ class DataObject
     {
         return $this->data[$this->resolveKey($key)] ?? null;
     }
+
+    /**
+     * @return array
+     */
+    public function getArray(): array
+    {
+        return $this->data;
+    }
 }

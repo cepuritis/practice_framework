@@ -6,7 +6,7 @@ class ResourceManager
 {
     private string $assetDir;
     private array $loadedIcons = [];
-    public function __construct(string $assetDirectory = ASSETS_PATH)
+    public function __construct(string $assetDirectory = INTERNAL_ASSETS_PATH)
     {
         $this->assetDir = $assetDirectory;
     }

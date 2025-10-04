@@ -2,6 +2,11 @@
 
 namespace Core\Routing;
 
+<<<<<<< Updated upstream
+=======
+use Core\Config\Config;
+use Core\Contracts\Config\ConfigInterface;
+>>>>>>> Stashed changes
 use Core\Contracts\Http\HttpRequestInterface;
 use Core\Contracts\Http\HttpResponseCode;
 use Core\Contracts\RouterInterface;
@@ -12,6 +17,13 @@ use Core\View\PageRenderer;
 class FrontController
 {
     private HttpRequestInterface $request;
+<<<<<<< Updated upstream
+=======
+
+    /**
+     * @param HttpRequestInterface $request
+     */
+>>>>>>> Stashed changes
     public function __construct(HttpRequestInterface $request)
     {
         $this->request = $request;
@@ -62,7 +74,7 @@ class FrontController
     }
 
     /**
-     * @return array<string>
+     * @return array
      */
     private function getAllRouters(): array
     {

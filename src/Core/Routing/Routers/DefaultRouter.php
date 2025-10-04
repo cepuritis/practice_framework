@@ -5,6 +5,7 @@ namespace Core\Routing\Routers;
 use Core\Contracts\BaseRouter;
 use Core\Contracts\Http\HttpRequestInterface;
 use Core\Contracts\Http\HttpRequestMethod;
+use Core\Exceptions\InvalidHttpMethod;
 use Core\Routing\Traits\RouteGenerator;
 
 class DefaultRouter extends BaseRouter
@@ -26,9 +27,11 @@ class DefaultRouter extends BaseRouter
     {
         parent::__construct($routes);
     }
+
     /**
      * @param HttpRequestInterface $request
      * @return void
+     * @throws \ReflectionException
      */
     public function dispatch(HttpRequestInterface $request): void
     {
@@ -41,7 +44,7 @@ class DefaultRouter extends BaseRouter
         $dependencies = [];
         foreach ($reflectionMethod->getParameters() as $parameter) {
             $paramType = $parameter->getType();
-            $dependencies[] = app()->make($paramType->getName());
+            $dependencies[] = app()->make($paramType);
         }
 
         $reflectionMethod->invokeArgs($controller, $dependencies);
@@ -49,6 +52,7 @@ class DefaultRouter extends BaseRouter
 
     /**
      * @return bool
+     * @throws InvalidHttpMethod
      */
     public function match(string $path, HttpRequestMethod $method): bool
     {

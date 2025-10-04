@@ -21,12 +21,7 @@ trait EnumSupportedValues
             );
         }
 
-        if (!method_exists(static::class, 'cases')) {
-            throw new \LogicException(sprintf(
-                "EnumSupportedValues requires a backed enum, %s is not suitable",
-                static::class
-            ));
-        }
+        /** @phpstan-ignore-next-line */
         return array_column(static::cases(), 'value');
     }
 }
