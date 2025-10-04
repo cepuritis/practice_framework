@@ -2,12 +2,32 @@
 
 namespace Core\App;
 
+use Core\Config\Config;
+use Core\Contracts\Application\ExceptionHandlerInterface;
+use Core\Contracts\Config\ConfigInterface;
+use Core\Contracts\Http\HttpRequestInterface;
+use Core\Contracts\View\MessageType;
+use Core\Exceptions\Csrf\CsrfException;
+use Core\Exceptions\Csrf\CsrfInvalidException;
+use Core\Exceptions\Csrf\CsrfMissingException;
+use Core\Http\HttpRequest;
+use Core\Http\HttpResponse;
+use Core\Routing\FrontController;
+use Core\Security\CsrfTokenManager;
+use Random\RandomException;
+
 class Application
 {
     private static ?Application $instance = null;
     private array $instances = [];
     private array $bindings = [];
     private array $contextualBinding = [];
+    private ?Config $config;
+    private ?HttpRequest $request;
+    private ?CsrfTokenManager $csrfTokenManager;
+    private ?ExceptionHandler $exceptionHandler;
+    private ?FrontController $frontController;
+
     private function __construct()
     {
     }
@@ -230,8 +250,6 @@ class Application
             echo $className . " => (". spl_object_id($object) .")" . get_class($object) . "</br>";
         }
     }
-<<<<<<< Updated upstream
-=======
 
     /**
      * @return void
@@ -281,5 +299,4 @@ class Application
             }
         }
     }
->>>>>>> Stashed changes
 }

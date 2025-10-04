@@ -4,6 +4,8 @@ namespace Core\Security;
 
 use Core\Contracts\Session\SessionStorageInterface;
 use Core\Contracts\Utils\ClockInterface;
+use Core\Exceptions\Csrf\CsrfInvalidException;
+use Core\Exceptions\Csrf\CsrfMissingException;
 use Random\RandomException;
 
 /**
@@ -16,12 +18,8 @@ use Random\RandomException;
 class CsrfTokenManager
 {
     public const TOKEN_KEY = 'csrf_token';
-<<<<<<< Updated upstream
-    public const TOKEN_LIFETIME = 86400;
-=======
     public const FORM_NAME = '_csrf';
     public const TOKEN_LIFETIME = 172800;
->>>>>>> Stashed changes
     public const GRACE_PERIOD = 3600;
 
     public const MAX_TOKENS = 3;
@@ -164,8 +162,6 @@ class CsrfTokenManager
 
         return false;
     }
-<<<<<<< Updated upstream
-=======
 
     /**
      * @param string|null $token
@@ -189,5 +185,4 @@ class CsrfTokenManager
         return '<input type="hidden" name="'
             . self::FORM_NAME . '" value="' . htmlspecialchars($this->getToken(), ENT_QUOTES) . '">';
     }
->>>>>>> Stashed changes
 }

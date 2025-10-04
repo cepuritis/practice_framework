@@ -10,7 +10,6 @@ use Core\Tags\MetaTag;
 use Core\Tags\ScriptTag;
 use Core\View\Traits\FlashMessageRenderer;
 use Core\View\Traits\UseOldPostData;
-use RuntimeException;
 
 class PageRenderer implements ViewInterface
 {
@@ -30,20 +29,11 @@ class PageRenderer implements ViewInterface
     protected array $linkTags = [];
     protected array $scriptTags = [];
 
-    protected array $localScripts = [];
-
-
-    //TODO Remove when ObjectManager implemented
-    public static ?PageRenderer $current = null;
-
-<<<<<<< Updated upstream
-=======
     /**
      * @param string $initialTemplate
      * @param string $baseTemplate
      * @param DataCollection|null $data
      */
->>>>>>> Stashed changes
     public function __construct(
         string $initialTemplate,
         string $baseTemplate = self::DEFAULT_BASE_TEMPLATE,
@@ -52,7 +42,6 @@ class PageRenderer implements ViewInterface
         $this->initialTemplate = $initialTemplate;
         $this->baseTemplate = $baseTemplate;
         $this->data = is_null($data) ? new DataCollection() : $data;
-        self::$current = $this;
         $this->addFlashMessagesToData();
     }
 
@@ -81,31 +70,11 @@ class PageRenderer implements ViewInterface
         } else {
             $viewData = $this->data;
         }
-<<<<<<< Updated upstream
 
-        $templatePath =  VIEW_PATH . "/{$this->initialTemplate}.phtml";
-
-        $render = function (DataCollection $data) use ($templatePath) {
-            if (!file_exists($templatePath) || $templatePath === $this->baseTemplate) {
-                throw new RuntimeException("Invalid template file specified " . $templatePath);
-            }
-            $template = null;
-            ob_start();
-            include $templatePath;
-            $template = ob_get_clean();
-            ob_start();
-            include $this->baseTemplate;
-            return ob_get_clean();
-        };
-
-
-        return $render($viewData);
-=======
         $pageContext = new PageContext($this, $this->data);
         $content = (new ViewRenderer($this->initialTemplate, $this->data))->render($viewData, $pageContext);
         return (new ViewRenderer($this->baseTemplate, $viewData))
             ->render($viewData, $pageContext, ['template' => $content]);
->>>>>>> Stashed changes
     }
 
     /**
@@ -178,7 +147,7 @@ class PageRenderer implements ViewInterface
             $content = $view->render($data);
         } catch (\ReflectionException $e) {
         }
-        
+
         return $content ?? "";
     }
 

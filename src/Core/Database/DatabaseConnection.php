@@ -4,12 +4,13 @@ namespace Core\Database;
 
 use Core\Config\Config;
 use Core\Config\Helpers\DatabaseConfig;
+use Core\Contracts\Config\ConfigInterface;
 
 class DatabaseConnection
 {
     private \PDO $connection;
 
-    public function __construct(Config $config)
+    public function __construct(ConfigInterface $config)
     {
         $dbConfig = new DatabaseConfig($config->getDatabase());
 

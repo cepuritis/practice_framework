@@ -4,6 +4,7 @@ namespace Core\User;
 
 use Core\Config\Config;
 use Core\Config\Helpers\RedisConfig;
+use Core\Contracts\Config\ConfigInterface;
 use Core\Contracts\Session\SessionStorageInterface;
 
 class Session implements SessionStorageInterface
@@ -12,7 +13,7 @@ class Session implements SessionStorageInterface
     public const REDIS = 'redis';
 
     private ?array $flashData = null;
-    public function __construct(Config $config)
+    public function __construct(ConfigInterface $config)
     {
         if (app()->hasInstanceOf(static::class)) {
             throw new \RuntimeException("Attempting to create multiple Session instances - not allowed");

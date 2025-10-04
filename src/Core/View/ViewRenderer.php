@@ -3,6 +3,7 @@ namespace Core\View;
 
 use Core\Contracts\View\ViewInterface;
 use Core\Models\Data\DataCollection;
+use Core\Security\CsrfTokenManager;
 use Core\View\Traits\FlashMessageRenderer;
 use Core\View\Traits\UseOldPostData;
 use RuntimeException;
@@ -38,14 +39,11 @@ class ViewRenderer implements ViewInterface
             throw new RuntimeException("Template not found: {$file}");
         }
 
-<<<<<<< Updated upstream
-        $render = function (string $file, DataCollection $data) {
-=======
+
         $setAdditionalData = fn (&$data) => $this->addAdditionalData($data);
         $render = function (string $file, DataCollection $data) use ($setAdditionalData, $extraVars) {
             extract($extraVars);
             $setAdditionalData($data);
->>>>>>> Stashed changes
             ob_start();
             include $file;
             return ob_get_clean();
