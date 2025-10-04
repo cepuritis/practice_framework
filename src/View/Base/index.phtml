@@ -35,12 +35,12 @@
 
     <?php
     /**
-     * @var \Core\Tags\ScriptTag $tag
+     * @var \Core\Tags\ScriptTag $script
      */
     foreach ($this->scriptTags as $script) {
         $script->render();
     }
-?>
+    ?>
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico">
 
@@ -50,11 +50,11 @@
     <!-- JS at top only if absolutely needed -->
 </head>
 <body class="bg-gray-100 text-gray-800 antialiased">
-<?= \Core\Helpers\ViewHelper::include("Partial/header") ?>
+<?= $this->include("Partial/header") ?>
 <?php
 /** @var  $template */
 echo $template;
 ?>
-<?= \Core\Helpers\ViewHelper::include("Partial/footer") ?>
+<?= $this->include("Partial/footer") ?>
 </body>
 </html>

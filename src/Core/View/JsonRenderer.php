@@ -37,7 +37,7 @@ class JsonRenderer implements JsonViewInterface
 
     /**
      * @param string $json
-     * @return void
+     * @return $this
      * @throws \JsonException
      */
     public function setJsonData(string $json): self
@@ -48,11 +48,17 @@ class JsonRenderer implements JsonViewInterface
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getJsonData(): string
     {
         return $this->json;
     }
 
+    /**
+     * @return string
+     */
     public function getTemplateName(): string
     {
         return 'json';
