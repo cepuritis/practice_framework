@@ -6,8 +6,12 @@ use Core\Contracts\Tags\HtmlTag;
 
 class ScriptTag extends HtmlTag
 {
-    public function __construct(string $src, bool $defer = true)
+    public function __construct(string $src, bool $defer = true, bool $isLocal = false)
     {
+        if ($isLocal) {
+            $src = PUBLIC_ASSETS_PATH . "/js/{$src}.js";
+        }
+
         $attributes = ['src' => $src];
         if ($defer) {
             $attributes['defer'] = "";
@@ -17,6 +21,7 @@ class ScriptTag extends HtmlTag
 
     public function render(bool $close = false, string $content = ""): void
     {
-        parent::render(true,);
+        $tag =  $this->getTag(true, $content);
+        echo $tag;
     }
 }

@@ -1,5 +1,7 @@
 <?php /** @var \Core\Models\Data\DataCollection $data */ ?>
+<?php /** @var \Core\Contexts\View\PageContext $this */ ?>
 
+<?php $this->addJs('home/fulljs/main'); ?>
 <main class="min-h-screen flex flex-col bg-gray-50">
 
     <!-- Contact Form Section -->
@@ -10,7 +12,7 @@
                 Have a question, suggestion, or just want to say hi? Fill out the form below and we'll respond as soon as possible.
             </p>
 
-            <?= \Core\Helpers\ViewHelper::include('Partial/messagebox') ?>
+            <?= $this->include('Partial/messagebox') ?>
 
             <div class="mt-6 bg-white shadow-lg rounded-xl p-10">
                 <form action="/contactus" method="POST" class="space-y-6">
@@ -19,6 +21,7 @@
                     <div>
                         <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
                         <input type="text" name="title" id="title" required
+                               value="<?= $data->getOldTitle() ?: "" ?>"
                                class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50 px-4 py-2 shadow-sm focus:border-blue-600 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition">
                     </div>
 
@@ -26,7 +29,9 @@
                     <div>
                         <label for="message" class="block text-sm font-medium text-gray-700">Message</label>
                         <textarea name="message" id="message" rows="6" required
-                                  class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50 px-4 py-2 shadow-sm focus:border-blue-600 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition"></textarea>
+                                  class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
+                                   px-4 py-2 shadow-sm focus:border-blue-600 focus:ring focus:ring-blue-200
+                                    focus:ring-opacity-50 transition"><?= $data->getOldMessage() ?: "" ?></textarea>
                     </div>
 
                     <!-- Submit Button -->

@@ -1,23 +1,20 @@
 <?php
 namespace Core\Http;
 
-use Core\Contracts\Config\ConfigInterface;
 use Core\Contracts\Http\HttpRequestInterface;
 use Core\Contracts\Http\HttpRequestMethod;
-use Core\Exceptions\CsrfInvalidException;
-use Core\Exceptions\CsrfMissingException;
 use Core\Exceptions\InvalidHttpMethod;
-use Core\Security\CsrfTokenManager;
 
 class HttpRequest implements HttpRequestInterface
 {
     private array $request = [];
-    private ConfigInterface $config;
+
     /**
      * @throws InvalidHttpMethod
      */
-    public function __construct(ConfigInterface $config)
+    public function __construct()
     {
+        //TODO Review which values might need to be escaped
         $this->request[self::METHOD] = HttpRequestMethod::fromString(
             $_SERVER['REQUEST_METHOD'] ?? HttpRequestMethod::GET->value
         );
@@ -29,14 +26,7 @@ class HttpRequest implements HttpRequestInterface
         $this->request[self::PARAMS] = $params;
         $this->request[self::POST_DATA] = $_POST ?? [];
         $this->request[self::REFERER] = $_SERVER[self::REFERER] ?? "";
-        $this->config = $config;
     }
-
-    /**
-     * @throws CsrfInvalidException
-     * @throws CsrfMissingException
-     * @return void
-     */
 
     /**
      * @return string
@@ -95,7 +85,12 @@ class HttpRequest implements HttpRequestInterface
         return $this->request[self::POST_DATA][$name] ?? null;
     }
 
-    public function redirect(string $path, HttpRequestMethod $method = HttpRequestMethod::GET)
+    /**
+     * @param string $path
+     * @param HttpRequestMethod $method
+     * @return void
+     */
+    public function redirect(string $path, HttpRequestMethod $method = HttpRequestMethod::GET): void
     {
         $this->request[self::PATH] = $path;
         $this->request[self::METHOD] = $method;

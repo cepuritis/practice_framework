@@ -12,17 +12,14 @@ use Core\Http\HttpResponse;
 class ExceptionHandler implements ExceptionHandlerInterface
 {
     private HttpRequestInterface $request;
-    private Config $config;
 
     /**
      * @param HttpRequestInterface $request
-     * @param Config $config
      */
-    public function __construct(HttpRequestInterface $request, Config $config)
+    public function __construct(HttpRequestInterface $request)
     {
 
         $this->request = $request;
-        $this->config = $config;
     }
     public function handle(\Exception $exception): void
     {
@@ -42,6 +39,6 @@ class ExceptionHandler implements ExceptionHandlerInterface
     {
         $response = new HttpResponse();
         $redirectUrl = $this->request->getReferer() ?: $this->request->getHost();
-        $response->withMessage(MessageType::ERROR, $e->getMessage())->redirect($redirectUrl);
+        $response->withMessage(MessageType::ERROR, $e->getMessage())->redirect($redirectUrl)->withPostData();
     }
 }

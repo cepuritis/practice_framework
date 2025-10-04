@@ -6,7 +6,6 @@ use Core\Config\Config;
 use Core\Config\Helpers\RedisConfig;
 use Core\Contracts\Config\ConfigInterface;
 use Core\Contracts\Session\SessionStorageInterface;
-use http\Exception\RuntimeException;
 
 class Session implements SessionStorageInterface
 {
@@ -34,7 +33,7 @@ class Session implements SessionStorageInterface
     }
 
     /**
-     * @param array $redis
+     * @param RedisConfig $redis
      * @return void
      */
     private function initRedisSessionStorage(RedisConfig $redis): void
@@ -124,15 +123,18 @@ class Session implements SessionStorageInterface
     }
 
     /**
+     * @param $key
      * @param array|string $data
+     * @param bool $replace
      * @return void
      */
     public function addFlash($key, array | string $data, bool $replace = true): void
     {
         if (!$replace && isset($_SESSION[self::FLASH_DATA_KEY][$key])) {
-            $_SESSION[self::FLASH_DATA_KEY][$key][] = $data;
+            $existing =  $_SESSION[self::FLASH_DATA_KEY][$key];
+            $_SESSION[self::FLASH_DATA_KEY][$key] = is_array($existing) ? [...$existing, $data] : [$existing, $data];
         } else {
-            $_SESSION[self::FLASH_DATA_KEY][$key] = [$data];
+            $_SESSION[self::FLASH_DATA_KEY][$key] = $data;
         }
     }
 

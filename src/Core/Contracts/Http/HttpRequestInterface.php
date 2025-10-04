@@ -1,7 +1,5 @@
 <?php
 namespace Core\Contracts\Http;
-use Core\Exceptions\CsrfInvalidException;
-use Core\Exceptions\CsrfMissingException;
 
 interface HttpRequestInterface
 {

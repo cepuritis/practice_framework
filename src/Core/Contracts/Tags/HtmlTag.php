@@ -49,9 +49,22 @@ abstract class HtmlTag
     }
 
     /**
+     * @param bool $close
+     * @param string $content
      * @return void
      */
     public function render(bool $close = false, string $content = ""): void
+    {
+        $tag =  $this->getTag($close, $content);
+        echo $tag;
+    }
+
+    /**
+     * @param bool $close
+     * @param string $content
+     * @return string
+     */
+    public function getTag(bool $close = false, string $content = ""): string
     {
         if (!$this->name) {
             throw new RuntimeException("Attribute Name Not set");
@@ -71,6 +84,15 @@ abstract class HtmlTag
             echo ">" .PHP_EOL;
             echo $content . "</{$this->name}>";
         }
-        echo ob_get_clean();
+
+        return ob_get_clean();
+    }
+
+    /**
+     * @return string
+     */
+    public function getHash(): string
+    {
+        return md5($this->name);
     }
 }

@@ -19,7 +19,7 @@ class CsrfTokenManager
 {
     public const TOKEN_KEY = 'csrf_token';
     public const FORM_NAME = '_csrf';
-    public const TOKEN_LIFETIME = 86400;
+    public const TOKEN_LIFETIME = 172800;
     public const GRACE_PERIOD = 3600;
 
     public const MAX_TOKENS = 3;
@@ -134,7 +134,6 @@ class CsrfTokenManager
     /**
      * @param string $value
      * @return bool
-     * @throws RandomException
      */
     public function isTokenValid(string $value): bool
     {
@@ -183,6 +182,7 @@ class CsrfTokenManager
      */
     public function input(): string
     {
-        return '<input type="hidden" name="' . self::FORM_NAME . '" value="' . htmlspecialchars($this->getToken(), ENT_QUOTES) . '">';
+        return '<input type="hidden" name="'
+            . self::FORM_NAME . '" value="' . htmlspecialchars($this->getToken(), ENT_QUOTES) . '">';
     }
 }

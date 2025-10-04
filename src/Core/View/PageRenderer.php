@@ -2,18 +2,19 @@
 
 namespace Core\View;
 
+use Core\Contexts\View\PageContext;
 use Core\Contracts\View\ViewInterface;
 use Core\Models\Data\DataCollection;
-use Core\Security\CsrfTokenManager;
 use Core\Tags\LinkTag;
 use Core\Tags\MetaTag;
 use Core\Tags\ScriptTag;
 use Core\View\Traits\FlashMessageRenderer;
-use RuntimeException;
+use Core\View\Traits\UseOldPostData;
 
 class PageRenderer implements ViewInterface
 {
     use FlashMessageRenderer;
+    use UseOldPostData;
 
     protected ?DataCollection $data;
 
@@ -28,13 +29,10 @@ class PageRenderer implements ViewInterface
     protected array $linkTags = [];
     protected array $scriptTags = [];
 
-
-    //TODO Remove when ObjectManager implemented
-    public static ?PageRenderer $current = null;
-
     /**
      * @param string $initialTemplate
      * @param string $baseTemplate
+     * @param DataCollection|null $data
      */
     public function __construct(
         string $initialTemplate,
@@ -42,12 +40,16 @@ class PageRenderer implements ViewInterface
         ?DataCollection $data = null
     ) {
         $this->initialTemplate = $initialTemplate;
-        $this->baseTemplate = VIEW_PATH . "/{$baseTemplate}.phtml";
+        $this->baseTemplate = $baseTemplate;
         $this->data = is_null($data) ? new DataCollection() : $data;
-        self::$current = $this;
         $this->addFlashMessagesToData();
     }
 
+    /**
+     * @param DataCollection $data
+     * @param bool $merge
+     * @return void
+     */
     public function setData(DataCollection $data, bool $merge = true)
     {
         if ($merge) {
@@ -69,24 +71,10 @@ class PageRenderer implements ViewInterface
             $viewData = $this->data;
         }
 
-        $templatePath =  VIEW_PATH . "/{$this->initialTemplate}.phtml";
-
-        $render = function (DataCollection $data) use ($templatePath) {
-            if (!file_exists($templatePath) || $templatePath === $this->baseTemplate) {
-                throw new RuntimeException("Invalid template file specified " . $templatePath);
-            }
-            $data['csrf'] = app()->make(CsrfTokenManager::class)->input();
-            $template = null;
-            ob_start();
-            include $templatePath;
-            $template = ob_get_clean();
-            ob_start();
-            include $this->baseTemplate;
-            return ob_get_clean();
-        };
-
-
-        return $render($viewData);
+        $pageContext = new PageContext($this, $this->data);
+        $content = (new ViewRenderer($this->initialTemplate, $this->data))->render($viewData, $pageContext);
+        return (new ViewRenderer($this->baseTemplate, $viewData))
+            ->render($viewData, $pageContext, ['template' => $content]);
     }
 
     /**
@@ -95,7 +83,7 @@ class PageRenderer implements ViewInterface
      */
     public function addMetaTag(MetaTag $tag): self
     {
-        $this->metaTags[] = $tag;
+        $this->metaTags[$tag->getHash()] = $tag;
         return $this;
     }
 
@@ -103,18 +91,18 @@ class PageRenderer implements ViewInterface
      * @param ScriptTag $script
      * @return void
      */
-    public function addExternalScript(ScriptTag $script)
+    public function addExternalScript(ScriptTag $script): void
     {
-        $this->scriptTags[] = $script;
+        $this->scriptTags[$script->getHash()] = $script;
     }
 
     /**
      * @param LinkTag $link
      * @return void
      */
-    public function addLinkTag(LinkTag $link)
+    public function addLinkTag(LinkTag $link): void
     {
-        $this->linkTags[] = $link;
+        $this->linkTags[$link->getHash()] = $link;
     }
 
     /**
@@ -125,15 +113,6 @@ class PageRenderer implements ViewInterface
     {
         $this->data->setTitle($title);
         return $this;
-    }
-
-    /**
-     * @param ViewInterface $view
-     * @return void
-     */
-    public function addView(ViewInterface $view): void
-    {
-        $this->views[$view->getTemplateName()] = $view;
     }
 
     /**
@@ -150,5 +129,63 @@ class PageRenderer implements ViewInterface
     public function getTemplateName(): string
     {
         return $this->initialTemplate;
+    }
+
+    /**
+     * @param string $template
+     * @param DataCollection|array $data
+     * @return string
+     */
+    public function include(string $template, DataCollection|array $data = []): string
+    {
+        if (!($data instanceof DataCollection)) {
+            $data = new DataCollection($data);
+        }
+        $view = new ViewRenderer($template, $data);
+        $this->views[$view->getTemplateName()] = $view;
+        try {
+            $content = $view->render($data);
+        } catch (\ReflectionException $e) {
+        }
+
+        return $content ?? "";
+    }
+
+    /**
+     * @return array
+     */
+    public function getMetaTags(): array
+    {
+        return $this->metaTags;
+    }
+
+    /**
+     * @return array
+     */
+    public function getScriptTags(): array
+    {
+        return $this->scriptTags;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLinkTags(): array
+    {
+        return $this->linkTags;
+    }
+
+    public function addJs(string $src)
+    {
+        $script = new ScriptTag($src, true, true);
+        $this->scriptTags[md5($src)] = $script;
+    }
+
+    public function removeJs(string $src)
+    {
+        $key = md5($src);
+        if (isset($this->scriptTags[$key])) {
+            unset($this->scriptTags[$key]);
+        }
     }
 }

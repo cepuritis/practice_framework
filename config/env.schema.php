@@ -38,11 +38,15 @@ return [
         ],
 
         'database' => [
-            'host' => ['type' => 'string', 'default' => '127.0.0.1'],
-            'port' => ['type' => 'int', 'default' => 3306],
-            'table' => ['type' => 'string'],
-            'user' => ['type' => 'string'],
-            'pass' => ['type' => 'string'],
+            'type' => 'object',
+            'fields' => [
+                'host' => ['type' => 'string'],
+                'port' => ['type' => 'int'],
+                'table' => ['type' => 'string'],
+                'user' => ['type' => 'string'],
+                'pass' => ['type' => 'string'],
+            ],
+            'description' => 'Database Configurations'
         ],
 
         'csrf_enabled' => [

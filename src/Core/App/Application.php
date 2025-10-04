@@ -44,7 +44,7 @@ class Application
     public static function getInstance(): Application
     {
         if (!self::$instance) {
-            self::$instance =new static();
+            self::$instance =new self();
         }
 
         return self::$instance;
@@ -66,7 +66,7 @@ class Application
      * @param string|null $currentContext
      * @return mixed|object|string|null
      */
-    public function make(string $class, array $parameters = [], string $currentContext = null): mixed
+    public function make(string $class, array $parameters = [], string $currentContext = null)
     {
         $isShared = true;
         $concrete = $class;
@@ -104,10 +104,15 @@ class Application
      * @param $isShared
      * @param $useContextualBinding
      * @param $currentContext
-     * @return mixed|null
+     * @return object|null
      */
-    private function getInstanceIfExists($key, $concrete, $isShared, $useContextualBinding, $currentContext)
-    {
+    private function getInstanceIfExists(
+        $key,
+        $concrete,
+        $isShared,
+        $useContextualBinding,
+        $currentContext
+    ): object|null {
         if ($concrete === static::class) {
             return $this;
         }
@@ -121,7 +126,7 @@ class Application
                 if (get_class($existingInstance) === $concrete) {
                     if (str_contains($existingKey, '@')) {
                         if ($useContextualBinding) {
-                            $contextPart = strstr('@', $existingKey, 2)[1];
+                            $contextPart = strstr('@', $existingKey, true)[1];
                             if ($contextPart === $currentContext) {
                                 $instance = $existingInstance;
                                 break;
@@ -169,9 +174,6 @@ class Application
         return $instance ?? $this->build($concrete, $parameters, false);
     }
 
-    /**
-     * @throws \ReflectionException
-     */
     private function build(string | \Closure $concrete, array $parameters = [], bool $shared = true)
     {
         $instance = null;
@@ -190,13 +192,14 @@ class Application
             if ($constructor) {
                 foreach ($constructor->getParameters() as $parameter) {
                     $paramName = $parameter->getName();
+                    /** @var \ReflectionNamedType| null $paramType */
                     $paramType = $parameter->getType();
 
                     if (array_key_exists($paramName, $parameters)) {
                         $paramValue = $parameters[$paramName];
                         //Try to instantiate only if param type is not primitive and value is string
                         if (is_string($paramValue)
-                            && (!$paramType || !$paramType->isBuiltin())
+                            && ($paramType && !$paramType->isBuiltin())
                             && class_exists($paramValue)) {
                             $dependencies[] = $getDependency($paramValue);
                         } else {
@@ -221,6 +224,9 @@ class Application
         return $instance;
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function get($class, $parameters = [])
     {
         return $this->make($class, $parameters);
@@ -251,6 +257,7 @@ class Application
      */
     private function validateCsrf(): void
     {
+        //TODO: Could implement separate validators class if more validations needed
         if ($this->config->getCsrfEnabled()) {
             $data = $this->request->getPostData();
 
