@@ -10,11 +10,11 @@ use Core\Http\HttpRequest;
 use Core\User\Session;
 use Core\Config\Config;
 
-app()->make(HttpRequest::class);
-app()->make(Session::class);
-
 /** @var Config $config */
 $config = app()->get(Config::class);
+app()->make(Session::class);
+
+app()->make(HttpRequest::class);
 
 if ($config->getDatabase()) {
     app()->make(\Core\Database\DatabaseConnection::class);

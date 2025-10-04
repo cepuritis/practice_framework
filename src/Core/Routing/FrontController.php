@@ -2,19 +2,33 @@
 
 namespace Core\Routing;
 
+use Core\Config\Config;
 use Core\Contracts\Http\HttpRequestInterface;
 use Core\Contracts\Http\HttpResponseCode;
 use Core\Contracts\RouterInterface;
+use Core\Contracts\View\MessageType;
+use Core\Exceptions\Csrf\CsrfException;
 use Core\Http\HttpResponse;
+use Core\Security\CsrfTokenManager;
 use Core\Tags\MetaTag;
 use Core\View\PageRenderer;
 
 class FrontController
 {
     private HttpRequestInterface $request;
-    public function __construct(HttpRequestInterface $request)
+    private CsrfTokenManager $csrfTokenManager;
+    private Config $config;
+
+    /**
+     * @param HttpRequestInterface $request
+     * @param CsrfTokenManager $csrfTokenManager
+     * @param Config $config
+     */
+    public function __construct(HttpRequestInterface $request, CsrfTokenManager $csrfTokenManager, Config $config)
     {
         $this->request = $request;
+        $this->csrfTokenManager = $csrfTokenManager;
+        $this->config = $config;
     }
 
     /**

@@ -1,20 +1,23 @@
 <?php
 namespace Core\Http;
 
+use Core\Contracts\Config\ConfigInterface;
 use Core\Contracts\Http\HttpRequestInterface;
 use Core\Contracts\Http\HttpRequestMethod;
+use Core\Exceptions\CsrfInvalidException;
+use Core\Exceptions\CsrfMissingException;
 use Core\Exceptions\InvalidHttpMethod;
+use Core\Security\CsrfTokenManager;
 
 class HttpRequest implements HttpRequestInterface
 {
     private array $request = [];
-
+    private ConfigInterface $config;
     /**
      * @throws InvalidHttpMethod
      */
-    public function __construct()
+    public function __construct(ConfigInterface $config)
     {
-        //TODO Review which values might need to be escaped
         $this->request[self::METHOD] = HttpRequestMethod::fromString(
             $_SERVER['REQUEST_METHOD'] ?? HttpRequestMethod::GET->value
         );
@@ -25,7 +28,15 @@ class HttpRequest implements HttpRequestInterface
         parse_str(parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY) ?? "", $params);
         $this->request[self::PARAMS] = $params;
         $this->request[self::POST_DATA] = $_POST ?? [];
+        $this->request[self::REFERER] = $_SERVER[self::REFERER] ?? "";
+        $this->config = $config;
     }
+
+    /**
+     * @throws CsrfInvalidException
+     * @throws CsrfMissingException
+     * @return void
+     */
 
     /**
      * @return string
@@ -67,14 +78,34 @@ class HttpRequest implements HttpRequestInterface
         return $this->request[self::PARAMS];
     }
 
+    /**
+     * @return array
+     */
     public function getPostData(): array
     {
         return $this->request[self::POST_DATA];
+    }
+
+    /**
+     * @param string $name
+     * @return string|null
+     */
+    public function getPostParam(string $name): ?string
+    {
+        return $this->request[self::POST_DATA][$name] ?? null;
     }
 
     public function redirect(string $path, HttpRequestMethod $method = HttpRequestMethod::GET)
     {
         $this->request[self::PATH] = $path;
         $this->request[self::METHOD] = $method;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReferer(): string
+    {
+        return $this->request[self::REFERER];
     }
 }

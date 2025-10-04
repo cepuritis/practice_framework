@@ -2,13 +2,15 @@
 
 namespace Core\Config;
 
+use Core\Contracts\Config\ConfigInterface;
 use Core\Models\Data\DataObject;
 
 /**
  * @method getSession()
  * @method getDatabase()
+ * @method getCsrfEnabled()
  */
-class Config
+class Config implements ConfigInterface
 {
     public const SESSION_STORAGE = 'storage';
     public const HEADERS = 'headers';
@@ -20,6 +22,8 @@ class Config
     public function __construct(bool $readonly = true, $allowedChanges = ['session'])
     {
         $data = include CONFIG_PATH . "/env.php";
+        $defaultData = include CONFIG_PATH . '/env.schema.php';
+        $data = array_replace_recursive($this->getDefaultConfig($defaultData['_schema']), $data);
         $this->data = new DataObject($data);
         $this->readonly = $readonly;
         $this->allowedChanges = array_map(fn ($prop) => strtolower($prop), $allowedChanges);
@@ -43,5 +47,34 @@ class Config
         }
 
         return $this->data->$name($arguments);
+    }
+
+    protected function getDefaultConfig(array $schema = []): array
+    {
+        $defaults = [];
+
+        foreach ($schema as $key => $value) {
+            // A primitive value
+            if (isset($value['default'])) {
+                $defaults[$key] = $value['default'];
+                continue;
+            }
+
+            // Object With Fields
+            if (($value['type'] ?? null) === 'object' && isset($value['fields'])) {
+                $defaults[$key] = $this->getDefaultConfig($value['fields']);
+                continue;
+            }
+
+            // Recurse Deeper
+            if ((is_array($value))) {
+                $nestedData = $this->getDefaultConfig($value);
+                if ($nestedData !== []) {
+                    $defaults[$key] = $nestedData;
+                }
+            }
+        }
+
+        return $defaults;
     }
 }

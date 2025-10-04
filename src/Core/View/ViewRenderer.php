@@ -3,6 +3,7 @@ namespace Core\View;
 
 use Core\Contracts\View\ViewInterface;
 use Core\Models\Data\DataCollection;
+use Core\Security\CsrfTokenManager;
 use Core\View\Traits\FlashMessageRenderer;
 use RuntimeException;
 
@@ -29,13 +30,13 @@ class ViewRenderer implements ViewInterface
         } else {
             $viewData = $this->data;
         }
-
         $file = VIEW_PATH . "/{$this->template}.phtml";
         if (!file_exists($file)) {
             throw new RuntimeException("Template not found: {$file}");
         }
 
         $render = function (string $file, DataCollection $data) {
+            $data['csrf'] = app()->make(CsrfTokenManager::class)->input();
             ob_start();
             include $file;
             return ob_get_clean();

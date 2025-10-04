@@ -2,12 +2,32 @@
 
 namespace Core\App;
 
+use Core\Config\Config;
+use Core\Contracts\Application\ExceptionHandlerInterface;
+use Core\Contracts\Config\ConfigInterface;
+use Core\Contracts\Http\HttpRequestInterface;
+use Core\Contracts\View\MessageType;
+use Core\Exceptions\Csrf\CsrfException;
+use Core\Exceptions\Csrf\CsrfInvalidException;
+use Core\Exceptions\Csrf\CsrfMissingException;
+use Core\Http\HttpRequest;
+use Core\Http\HttpResponse;
+use Core\Routing\FrontController;
+use Core\Security\CsrfTokenManager;
+use Random\RandomException;
+
 class Application
 {
     private static ?Application $instance = null;
     private array $instances = [];
     private array $bindings = [];
     private array $contextualBinding = [];
+    private ?Config $config;
+    private ?HttpRequest $request;
+    private ?CsrfTokenManager $csrfTokenManager;
+    private ?ExceptionHandler $exceptionHandler;
+    private ?FrontController $frontController;
+
     private function __construct()
     {
     }
@@ -46,7 +66,7 @@ class Application
      * @param string|null $currentContext
      * @return mixed|object|string|null
      */
-    public function make(string $class, array $parameters = [], string $currentContext = null)
+    public function make(string $class, array $parameters = [], string $currentContext = null): mixed
     {
         $isShared = true;
         $concrete = $class;
@@ -149,6 +169,9 @@ class Application
         return $instance ?? $this->build($concrete, $parameters, false);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     private function build(string | \Closure $concrete, array $parameters = [], bool $shared = true)
     {
         $instance = null;
@@ -198,9 +221,6 @@ class Application
         return $instance;
     }
 
-    /**
-     * @throws \ReflectionException
-     */
     public function get($class, $parameters = [])
     {
         return $this->make($class, $parameters);
@@ -222,6 +242,54 @@ class Application
     {
         foreach ($this->instances as $className => $object) {
             echo $className . " => (". spl_object_id($object) .")" . get_class($object) . "</br>";
+        }
+    }
+
+    /**
+     * @return void
+     * @throws CsrfMissingException|CsrfInvalidException|RandomException
+     */
+    private function validateCsrf(): void
+    {
+        if ($this->config->getCsrfEnabled()) {
+            $data = $this->request->getPostData();
+
+            if (count($data)) {
+                $token = $this->request->getPostParam(CsrfTokenManager::FORM_NAME);
+                $this->csrfTokenManager->validateToken($token);
+            }
+        }
+    }
+
+    /**
+     * @return void
+     * @throws CsrfMissingException|CsrfInvalidException|RandomException
+     */
+    private function init(): void
+    {
+        $this->config = $this->make(ConfigInterface::class);
+        $this->request = $this->make(HttpRequestInterface::class);
+        $this->csrfTokenManager = $this->make(CsrfTokenManager::class);
+        $this->exceptionHandler = $this->make(ExceptionHandlerInterface::class);
+        $this->frontController = $this->make(FrontController::class);
+
+        $this->validateCsrf();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function run(): void
+    {
+        try {
+            $this->init();
+            $this->frontController->dispatch();
+        } catch (\Exception $e) {
+            if ($this->exceptionHandler) {
+                $this->exceptionHandler->handle($e);
+            } else {
+                throw $e;
+            }
         }
     }
 }
