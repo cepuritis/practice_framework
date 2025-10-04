@@ -24,7 +24,7 @@ class Application
     public static function getInstance(): Application
     {
         if (!self::$instance) {
-            self::$instance =new static();
+            self::$instance =new self();
         }
 
         return self::$instance;
@@ -84,10 +84,15 @@ class Application
      * @param $isShared
      * @param $useContextualBinding
      * @param $currentContext
-     * @return mixed|null
+     * @return object|null
      */
-    private function getInstanceIfExists($key, $concrete, $isShared, $useContextualBinding, $currentContext)
-    {
+    private function getInstanceIfExists(
+        $key,
+        $concrete,
+        $isShared,
+        $useContextualBinding,
+        $currentContext
+    ): object|null {
         if ($concrete === static::class) {
             return $this;
         }
@@ -101,7 +106,7 @@ class Application
                 if (get_class($existingInstance) === $concrete) {
                     if (str_contains($existingKey, '@')) {
                         if ($useContextualBinding) {
-                            $contextPart = strstr('@', $existingKey, 2)[1];
+                            $contextPart = strstr('@', $existingKey, true)[1];
                             if ($contextPart === $currentContext) {
                                 $instance = $existingInstance;
                                 break;
@@ -167,13 +172,14 @@ class Application
             if ($constructor) {
                 foreach ($constructor->getParameters() as $parameter) {
                     $paramName = $parameter->getName();
+                    /** @var \ReflectionNamedType| null $paramType */
                     $paramType = $parameter->getType();
 
                     if (array_key_exists($paramName, $parameters)) {
                         $paramValue = $parameters[$paramName];
                         //Try to instantiate only if param type is not primitive and value is string
                         if (is_string($paramValue)
-                            && (!$paramType || !$paramType->isBuiltin())
+                            && ($paramType && !$paramType->isBuiltin())
                             && class_exists($paramValue)) {
                             $dependencies[] = $getDependency($paramValue);
                         } else {
@@ -224,4 +230,56 @@ class Application
             echo $className . " => (". spl_object_id($object) .")" . get_class($object) . "</br>";
         }
     }
+<<<<<<< Updated upstream
+=======
+
+    /**
+     * @return void
+     * @throws CsrfMissingException|CsrfInvalidException|RandomException
+     */
+    private function validateCsrf(): void
+    {
+        //TODO: Could implement separate validators class if more validations needed
+        if ($this->config->getCsrfEnabled()) {
+            $data = $this->request->getPostData();
+
+            if (count($data)) {
+                $token = $this->request->getPostParam(CsrfTokenManager::FORM_NAME);
+                $this->csrfTokenManager->validateToken($token);
+            }
+        }
+    }
+
+    /**
+     * @return void
+     * @throws CsrfMissingException|CsrfInvalidException|RandomException
+     */
+    private function init(): void
+    {
+        $this->config = $this->make(ConfigInterface::class);
+        $this->request = $this->make(HttpRequestInterface::class);
+        $this->csrfTokenManager = $this->make(CsrfTokenManager::class);
+        $this->exceptionHandler = $this->make(ExceptionHandlerInterface::class);
+        $this->frontController = $this->make(FrontController::class);
+
+        $this->validateCsrf();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function run(): void
+    {
+        try {
+            $this->init();
+            $this->frontController->dispatch();
+        } catch (\Exception $e) {
+            if ($this->exceptionHandler) {
+                $this->exceptionHandler->handle($e);
+            } else {
+                throw $e;
+            }
+        }
+    }
+>>>>>>> Stashed changes
 }

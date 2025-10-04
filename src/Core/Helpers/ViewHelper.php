@@ -40,21 +40,4 @@ class ViewHelper
 
         return '/build/' . $data[self::STYLE_MAIN_VIEW]['file'];
     }
-
-    /**
-     * @param string $template
-     * @param DataCollection|array $data
-     * @return string
-     * @throws \ReflectionException
-     */
-    public static function include(string $template, DataCollection|array $data = [])
-    {
-        if (!($data instanceof DataCollection)) {
-            $data = new DataCollection($data);
-        }
-        $view = new ViewRenderer($template, $data);
-        PageRenderer::$current->addView($view);
-
-        return $view->render($data);
-    }
 }

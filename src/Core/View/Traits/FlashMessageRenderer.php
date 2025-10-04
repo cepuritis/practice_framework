@@ -2,17 +2,18 @@
 
 namespace Core\View\Traits;
 
-use Core\User\Session;
+use Core\Contracts\Session\SessionStorageInterface;
 use Core\View\Widgets\Message;
 
 trait FlashMessageRenderer
 {
     private function addFlashMessagesToData(): void
     {
-        $session = app()->get(Session::class);
+        $session = app()->get(SessionStorageInterface::class);
         $messages = [];
         if (isset($session->getFlash()['message'])) {
             $messageData = $session->getFlash()['message'];
+            $messageData = isset($messageData[0]) ? $messageData : [$messageData];
             foreach ($messageData as $message) {
                 foreach ($message as $status => $text) {
                     $messages[] = new Message($status, $text);
