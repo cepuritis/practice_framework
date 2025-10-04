@@ -3,20 +3,12 @@ namespace Core\Http;
 
 use Core\Contracts\Http\HttpRequestInterface;
 use Core\Contracts\Http\HttpRequestMethod;
-<<<<<<< Updated upstream
-=======
-use Core\Exceptions\Csrf\CsrfInvalidException;
-use Core\Exceptions\Csrf\CsrfMissingException;
->>>>>>> Stashed changes
 use Core\Exceptions\InvalidHttpMethod;
 
 class HttpRequest implements HttpRequestInterface
 {
     private array $request = [];
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
     /**
      * @throws InvalidHttpMethod
      */
@@ -32,26 +24,11 @@ class HttpRequest implements HttpRequestInterface
         $params = [];
         parse_str(parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY) ?? "", $params);
         $this->request[self::PARAMS] = $params;
-<<<<<<< Updated upstream
         $this->request[self::POST_DATA] = $_POST ?? [];
     }
 
     /**
      * @return string
-=======
-        $this->request[self::POST_DATA] = $_POST;
-        $this->request[self::REFERER] = $_SERVER[self::REFERER] ?? "";
-    }
-
-    /**
-     * @throws CsrfInvalidException
-     * @throws CsrfMissingException
-     * @return void
-     */
-
-    /**
-     * @return HttpRequestMethod
->>>>>>> Stashed changes
      */
     public function getMethod(): HttpRequestMethod
     {
@@ -95,25 +72,7 @@ class HttpRequest implements HttpRequestInterface
         return $this->request[self::POST_DATA];
     }
 
-<<<<<<< Updated upstream
     public function redirect(string $path, HttpRequestMethod $method = HttpRequestMethod::GET)
-=======
-    /**
-     * @param string $name
-     * @return string|null
-     */
-    public function getPostParam(string $name): ?string
-    {
-        return $this->request[self::POST_DATA][$name] ?? null;
-    }
-
-    /**
-     * @param string $path
-     * @param HttpRequestMethod $method
-     * @return void
-     */
-    public function redirect(string $path, HttpRequestMethod $method = HttpRequestMethod::GET): void
->>>>>>> Stashed changes
     {
         $this->request[self::PATH] = $path;
         $this->request[self::METHOD] = $method;

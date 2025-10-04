@@ -1,16 +1,10 @@
 {
   "src/View/assets/css/app.css": {
-    "file": "app-CJYxxcuE.css",
+    "file": "assets/app-CJYxxcuE.css",
     "src": "src/View/assets/css/app.css",
     "isEntry": true,
     "names": [
       "app.css"
     ]
-  },
-  "src/View/assets/js/home/fulljs/main.js": {
-    "file": "js/home/fulljs/main.js",
-    "name": "assets/js/home/fulljs/main",
-    "src": "src/View/assets/js/home/fulljs/main.js",
-    "isEntry": true
   }
 }

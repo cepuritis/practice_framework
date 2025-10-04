@@ -1,5 +1,0 @@
-parameters:
-    bootstrapFiles:
-        - config/globalConstants.php
-    ignoreErrors:
-        - '#Call to an undefined method Core\\Models\\Data\\DataCollection::.*#'
