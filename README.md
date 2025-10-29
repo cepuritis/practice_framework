@@ -5,7 +5,8 @@ Some parts might not be up to date !
 I wrote this small php Framework for practice purposes and to review some of forgotten php functionality that's why 'spl_autoload_register' is used here instead of composer psr4 autoloader.
 
 # Usage
-
+To start a ready to use project docker configuration is providedm, just run ```docker compose up```
+Nginx container has port 8080 published so the app can be accessed from ```http://localhost:8080```
 ## App Configuration
 Configuration is done in config/env.php file you can refer to env.example.php file. All possible configuration schema is declared in env.schema.php as well as default values. The schema is actually read, it does not validate anything but it loads the default values if any are set and then merges those with env.php values.
 ## Controller
@@ -111,7 +112,7 @@ A message that will be set only for the current response can be attached using w
 To see the passed message on your response page you can either include the default message template in your phtml file or
 create your own message template.
 ```php
-<?= \Core\Helpers\ViewHelper::include('Partial/messagebox') ?>
+<?= $this->include('Partial/messagebox') ?>
 ```
 > Note: Flash message is consumed inside PageRenderer constructor so if no PageRenderer is invoked the message stays in session.
 

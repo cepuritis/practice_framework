@@ -1,0 +1,52 @@
+services:
+  php:
+    container_name: practice-php
+    build: ./.docker/php
+    volumes:
+      - sock_data:/sock
+      - .:/var/www/html
+    networks:
+      - practice-network
+    environment:
+      - UID=${UID:-1000}
+      - GID=${GID:-1000}
+  nginx:
+    container_name: practice-nginx
+    image: nginx:1.29
+    volumes:
+      - sock_data:/sock
+      - .:/var/www/html
+      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - php
+      - database
+      - redis
+    networks:
+      - practice-network
+    ports:
+      - 8080:80
+  redis:
+    container_name: practice-redis
+    image: redis:8.2
+    networks:
+      - practice-network
+  database:
+    container_name: practice-db
+    image: mariadb:11.4
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./.docker/mariadb/docker-init-scripts:/docker-entrypoint-initdb.d:ro
+    ports:
+      - 3308:3306
+    environment:
+      - MARIADB_ROOT_PASSWORD=option123
+      - MARIADB_DATABASE=practice
+    networks:
+      - practice-network
+
+volumes:
+  sock_data:
+  db_data:
+networks:
+  practice-network:
+    driver: bridge

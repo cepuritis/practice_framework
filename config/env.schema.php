@@ -11,18 +11,18 @@ return [
             'storage' => [
                 'type' => 'enum',
                 'allowed' => ['files', 'redis', 'memcached'],
-                'default' => 'files',
+                'default' => 'redis',
                 'description' => 'Where session data is stored'
             ],
             'save_path' => [
                 'type' => 'string',
-                'default' => '/tmp',
+                'default' => '/var/lib/php/sessions',
                 'description' => 'Filesystem path if using "files" storage'
             ],
             'redis' => [
                 'type' => 'object',
                 'fields' => [
-                    'host' => ['type' => 'string', 'default' => '127.0.0.1'],
+                    'host' => ['type' => 'string', 'default' => 'redis'],
                     'port' => ['type' => 'int', 'default' => 6379],
                     'auth' => ['type' => 'string|null'],
                     'database' => ['type' => 'int', 'default' => 0],
@@ -40,11 +40,26 @@ return [
         'database' => [
             'type' => 'object',
             'fields' => [
-                'host' => ['type' => 'string'],
-                'port' => ['type' => 'int'],
-                'table' => ['type' => 'string'],
-                'user' => ['type' => 'string'],
-                'pass' => ['type' => 'string'],
+                'host' => [
+                    'type' => 'string',
+                    'default' => 'database'
+                ],
+                'port' => [
+                    'type' => 'int',
+                    'default' => 3306
+                ],
+                'table' => [
+                    'type' => 'string',
+                    'default' => 'practice'
+                ],
+                'user' => [
+                    'type' => 'string',
+                    'default' => 'root'
+                ],
+                'pass' => [
+                    'type' => 'string',
+                    'default' => 'option123'
+                ],
             ],
             'description' => 'Database Configurations'
         ],

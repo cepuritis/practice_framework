@@ -66,7 +66,7 @@ class Application
      * @param string|null $currentContext
      * @return mixed|object|string|null
      */
-    public function make(string $class, array $parameters = [], string $currentContext = null)
+    public function make(string $class, array $parameters = [], ?string $currentContext = null)
     {
         $isShared = true;
         $concrete = $class;
@@ -151,7 +151,7 @@ class Application
      * @param string|null $currentContext
      * @return mixed
      */
-    public function makeTransient(string $class, array $parameters = [], string $currentContext = null): mixed
+    public function makeTransient(string $class, array $parameters = [], ?string $currentContext = null): mixed
     {
         $concrete = $class;
 

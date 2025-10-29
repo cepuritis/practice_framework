@@ -26,7 +26,7 @@ class ViewRenderer implements ViewInterface
         $this->addFlashMessagesToData();
     }
 
-    public function render(?DataCollection $viewData = null, object $context = null, array $extraVars = []): string
+    public function render(?DataCollection $viewData = null, ?object $context = null, array $extraVars = []): string
     {
         if ($viewData instanceof DataCollection) {
             $viewData = $viewData->merge($this->data);
