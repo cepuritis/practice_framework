@@ -5,7 +5,7 @@ Some parts might not be up to date !
 I wrote this small php Framework for practice purposes and to review some of forgotten php functionality that's why 'spl_autoload_register' is used here instead of composer psr4 autoloader.
 
 # Usage
-To start a ready to use project docker configuration is providedm, just run ```docker compose up```
+To start a ready to use project docker configuration is provided, but first you need to create env.php file inside of config directory, it can return an empty array as default values from  env.schema.php will be used for the docker setup. Afterwards run ```docker compose up```
 Nginx container has port 8080 published so the app can be accessed from ```http://localhost:8080```
 ## App Configuration
 Configuration is done in config/env.php file you can refer to env.example.php file. All possible configuration schema is declared in env.schema.php as well as default values. The schema is actually read, it does not validate anything but it loads the default values if any are set and then merges those with env.php values.
