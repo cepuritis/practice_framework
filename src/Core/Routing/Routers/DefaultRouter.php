@@ -43,6 +43,7 @@ class DefaultRouter extends BaseRouter
 
         $dependencies = [];
         foreach ($reflectionMethod->getParameters() as $parameter) {
+            #Todo: maybe some safeguards regarding built in types ?
             $paramType = $parameter->getType();
             $dependencies[] = app()->make($paramType);
         }

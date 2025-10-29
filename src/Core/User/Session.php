@@ -19,6 +19,7 @@ class Session implements SessionStorageInterface
             throw new \RuntimeException("Attempting to create multiple Session instances - not allowed");
         }
 
+
         /** @var string $sessionStorage */
         $sessionStorage = $config->getSession()[Config::SESSION_STORAGE];
         if ($sessionStorage === Session::REDIS) {
@@ -65,7 +66,6 @@ class Session implements SessionStorageInterface
 
         $redisClient->select($db);
         $redisClient->close();
-
 
         $savePath = "tcp://{$host}:{$port}?persistent=1&database={$db}&prefix={$prefix}";
 

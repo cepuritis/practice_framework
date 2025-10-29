@@ -18,7 +18,7 @@ class HttpRequest implements HttpRequestInterface
         $this->request[self::METHOD] = HttpRequestMethod::fromString(
             $_SERVER['REQUEST_METHOD'] ?? HttpRequestMethod::GET->value
         );
-        $this->request[self::SCHEME] = $_SERVER['REQUEST_SCHEME'];
+        $this->request[self::SCHEME] = $_SERVER['REQUEST_SCHEME'] ?? 'https';
         $this->request[self::HOST] = $_SERVER['HTTP_HOST'];
         $this->request[self::PATH] = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $params = [];
