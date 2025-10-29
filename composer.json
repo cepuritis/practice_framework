@@ -24,7 +24,6 @@
   },
   "require": {
     "php": "^8.2",
-    "ext-pdo": "*",
-    "ext-zip": "*"
+    "ext-pdo": "*"
   }
 }
