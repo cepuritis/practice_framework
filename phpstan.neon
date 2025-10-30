@@ -1,5 +1,14 @@
 parameters:
+    level: 5
+    paths:
+        - Cli
+        - src
+    tmpDir: var/cache/phpstan
     bootstrapFiles:
         - config/globalConstants.php
     ignoreErrors:
         - '#Call to an undefined method Core\\Models\\Data\\DataCollection::.*#'
+
+    reportUnmatchedIgnoredErrors: false
+    stubFiles:
+    - config/env.php

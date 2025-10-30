@@ -24,12 +24,12 @@ class HttpRequest implements HttpRequestInterface
         $params = [];
         parse_str(parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY) ?? "", $params);
         $this->request[self::PARAMS] = $params;
-        $this->request[self::POST_DATA] = $_POST ?? [];
+        $this->request[self::POST_DATA] = $_POST;
         $this->request[self::REFERER] = $_SERVER[self::REFERER] ?? "";
     }
 
     /**
-     * @return string
+     * @return HttpRequestMethod
      */
     public function getMethod(): HttpRequestMethod
     {

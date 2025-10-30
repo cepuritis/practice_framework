@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "🔍 Running PHPStan level 5..."
+if ! vendor/bin/phpstan analyse --level=5 src; then
+    echo "❌ PHPStan failed. Fix the issues before committing."
+    exit 1
+fi
+echo "✅ PHPStan passed."
+
+echo "🧪 Running PHPUnit tests..."
+if ! vendor/bin/phpunit --testdox; then
+    echo "❌ PHPUnit tests failed. Fix the issues before committing."
+    exit 1
+fi
+echo "✅ All PHPUnit tests passed."
