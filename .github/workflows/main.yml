@@ -21,6 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: composer install --no-progress --no-suggest --prefer-dist
-
+      - name: Create dummy env.php for PHPStan
+        run: echo "<?php return [];" > config/env.php
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse --level=5
